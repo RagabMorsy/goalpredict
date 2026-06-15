@@ -656,8 +656,10 @@ function enterApp(u){
   const sh=JSON.parse(localStorage.getItem(`gp_hist_${u.userId}`)||'[]');
   predHistory.push(...sh);
   renderPredHist();
-  buildLB(); checkAPI(); loadMatches(); loadGroups(); updateDash();
+  checkAPI(); loadMatches(); loadGroups(); updateDash();
+  loadLeaderboard();
   setInterval(loadMatches,60000);
+  setInterval(loadLeaderboard,30000);
 }
 function doLogout(){
   currentUser=null;userPts=0;correctPreds=0;totalPreds=0;
@@ -677,18 +679,23 @@ function saveUserLocal(u){
     setUsers(users);
   }
 }
-function savePreds(){
+async function savePreds(){
   if(!currentUser)return;
+  // حفظ محلي كـ backup
   localStorage.setItem(`gp_preds_${currentUser.userId}`,JSON.stringify(preds));
   localStorage.setItem(`gp_hist_${currentUser.userId}`,JSON.stringify(predHistory));
-  localStorage.setItem(`gp_stats_${currentUser.userId}`,JSON.stringify({pts:userPts,correct:correctPreds,total:totalPreds}));
-  const users=getUsers();
-  if(users[currentUser.email]){
-    users[currentUser.email].points=userPts;
-    users[currentUser.email].correct=correctPreds;
-    users[currentUser.email].total=totalPreds;
-    setUsers(users);
-  }
+  // حفظ التوقع على السيرفر
+}
+
+async function savePredsToServer(matchId,wdl,wdlLabel,s1,s2){
+  if(!currentUser)return;
+  try{
+    await fetch(`${API}/api/predictions`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({userId:currentUser.userId,matchId,wdl,wdlLabel,scoreHome:s1,scoreAway:s2})
+    });
+  }catch(e){console.log('pred save error',e);}
 }
 
 // ===== TABS =====
@@ -841,7 +848,9 @@ function confirmPred(matchId,home,away){
   preds[matchId].s1=s1;preds[matchId].s2=s2;preds[matchId].confirmed=true;preds[matchId].pts=3;
   totalPreds++;
   predHistory.unshift({home,away,s1,s2,pts:3,wdl:preds[matchId].wdlLabel,matchId});
-  savePreds();buildLB();updateDash();loadMatches();renderPredHist();
+  savePreds();
+  savePredsToServer(matchId,preds[matchId].wdl,preds[matchId].wdlLabel,s1,s2);
+  loadLeaderboard();updateDash();loadMatches();renderPredHist();
   showModal('📝','توقع مسجّل!','+3?',`توقعت: ${preds[matchId].wdlLabel} | ${s1}–${s2}\nستحصل على نقاطك بعد انتهاء المباراة!`);
   addNotif('⚽',`توقع — ${home} vs ${away}`,`${preds[matchId].wdlLabel} | ${s1}–${s2}`);
 }
@@ -923,16 +932,40 @@ async function loadGroups(){
 
 // ===== LEADERBOARD =====
 function buildLB(){
-  const users=getUsers();
-  leaderboard=Object.values(users).map(u=>({
-    name:u.name,pts:u.points||0,correct:u.correct||0,total:u.total||0,
-    av:u.name.charAt(0).toUpperCase(),color:u.color||COLORS[0],isMe:u.email===currentUser?.email
-  }));
-  if(currentUser&&!leaderboard.find(x=>x.isMe)){
-    leaderboard.push({name:currentUser.name,pts:userPts,correct:correctPreds,total:totalPreds,
-      av:currentUser.name.charAt(0).toUpperCase(),color:COLORS[leaderboard.length%COLORS.length],isMe:true});
+  loadLeaderboard();
+}
+
+async function loadLeaderboard(){
+  try{
+    const r=await fetch(`${API}/api/leaderboard`);
+    const data=await r.json();
+    if(!Array.isArray(data)) return;
+    leaderboard=data.map((u,i)=>({
+      name:u.name,pts:u.points||0,correct:u.correct||0,total:u.total||0,
+      av:u.name.charAt(0).toUpperCase(),
+      color:u.color||COLORS[i%COLORS.length],
+      isMe:u.userId===currentUser?.userId
+    }));
+    // تحديث نقاط المستخدم الحالي من السيرفر
+    const me=leaderboard.find(x=>x.isMe);
+    if(me){
+      userPts=me.pts;correctPreds=me.correct;totalPreds=me.total;
+      updateDash();
+    }
+    renderLB();
+  }catch(e){
+    // fallback للبيانات المحلية
+    const users=getUsers();
+    leaderboard=Object.values(users).map(u=>({
+      name:u.name,pts:u.points||0,correct:u.correct||0,total:u.total||0,
+      av:u.name.charAt(0).toUpperCase(),color:u.color||COLORS[0],isMe:u.email===currentUser?.email
+    }));
+    if(currentUser&&!leaderboard.find(x=>x.isMe)){
+      leaderboard.push({name:currentUser.name,pts:userPts,correct:correctPreds,total:totalPreds,
+        av:currentUser.name.charAt(0).toUpperCase(),color:COLORS[leaderboard.length%COLORS.length],isMe:true});
+    }
+    renderLB();
   }
-  renderLB();
 }
 function renderLB(){
   const sorted=[...leaderboard].sort((a,b)=>b.pts-a.pts);
@@ -1049,13 +1082,14 @@ function renderStats(){
   document.getElementById('a-preds').textContent=tp;
   document.getElementById('a-pts').textContent=tpts;
 }
-function renderUsers(){
-  const users=getUsers();
+async function renderUsers(){
   const s=(document.getElementById('usearch')?.value||'').toLowerCase();
-  let rows='',i=1;
-  Object.values(users).filter(u=>u.name.toLowerCase().includes(s)||u.email.toLowerCase().includes(s))
-    .sort((a,b)=>(b.points||0)-(a.points||0))
-    .forEach(u=>{
+  try{
+    const r=await fetch(`${API}/api/users`);
+    const users=await r.json();
+    const filtered=users.filter(u=>u.name.toLowerCase().includes(s)||u.email.toLowerCase().includes(s));
+    let rows='',i=1;
+    filtered.forEach(u=>{
       const acc=u.total>0?Math.round(u.correct/u.total*100):0;
       rows+=`<tr><td style="color:var(--text2)">${i++}</td>
         <td><strong>${u.name}</strong></td>
@@ -1066,27 +1100,46 @@ function renderUsers(){
         <td><button class="bxs bxs-gold" onclick="resetUser('${u.email}')">↺</button>
             <button class="bxs bxs-red" onclick="deleteUser('${u.email}')">🗑</button></td></tr>`;
     });
-  document.getElementById('utbody').innerHTML=rows||`<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--text2)">لا يوجد مستخدمون</td></tr>`;
-  renderStats();
+    document.getElementById('utbody').innerHTML=rows||`<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--text2)">لا يوجد مستخدمون</td></tr>`;
+    // تحديث الإحصائيات
+    document.getElementById('a-users').textContent=users.length;
+    const tp=users.reduce((s,u)=>s+(u.total||0),0);
+    const tpts=users.reduce((s,u)=>s+(u.points||0),0);
+    document.getElementById('a-preds').textContent=tp;
+    document.getElementById('a-pts').textContent=tpts;
+  }catch(e){
+    document.getElementById('utbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--red)">❌ تعذر تحميل المستخدمين</td></tr>`;
+  }
 }
-function deleteUser(email){
+async function deleteUser(email){
   if(!confirm(`حذف ${email}؟`))return;
-  const users=getUsers();const u=users[email];
-  if(u)['preds','hist','stats'].forEach(k=>localStorage.removeItem(`gp_${k}_${u.userId}`));
-  delete users[email];setUsers(users);renderUsers();toast('✅ تم الحذف','ok');
+  try{
+    const r=await fetch(`${API}/api/users/${encodeURIComponent(email)}`,{method:'DELETE'});
+    if(!r.ok){const d=await r.json();toast(d.error||'خطأ','err');return;}
+    toast('✅ تم الحذف','ok');
+    renderUsers();loadLeaderboard();
+  }catch(e){toast('❌ تعذر الحذف','err');}
 }
-function resetUser(email){
+async function resetUser(email){
   if(!confirm(`تصفير نقاط ${email}؟`))return;
-  const users=getUsers();
-  if(users[email]){users[email].points=0;users[email].correct=0;users[email].total=0;
-    localStorage.setItem(`gp_stats_${users[email].userId}`,JSON.stringify({pts:0,correct:0,total:0}));}
-  setUsers(users);renderUsers();toast('✅ تم تصفير النقاط','ok');
+  try{
+    const r=await fetch(`${API}/api/users/${encodeURIComponent(email)}/reset`,{method:'PATCH'});
+    if(!r.ok){const d=await r.json();toast(d.error||'خطأ','err');return;}
+    toast('✅ تم تصفير النقاط','ok');
+    renderUsers();loadLeaderboard();
+  }catch(e){toast('❌ تعذر التصفير','err');}
 }
-function clearAll(){
-  if(!confirm('حذف جميع المستخدمين؟'))return;
-  const users=getUsers();
-  Object.values(users).forEach(u=>['preds','hist','stats'].forEach(k=>localStorage.removeItem(`gp_${k}_${u.userId}`)));
-  localStorage.removeItem('gp_users');renderUsers();toast('✅ تم الحذف الكامل','ok');
+async function clearAll(){
+  if(!confirm('حذف جميع المستخدمين؟ لا يمكن التراجع!'))return;
+  try{
+    const r=await fetch(`${API}/api/users`);
+    const users=await r.json();
+    for(const u of users){
+      await fetch(`${API}/api/users/${encodeURIComponent(u.email)}`,{method:'DELETE'});
+    }
+    toast('✅ تم حذف جميع المستخدمين','ok');
+    renderUsers();loadLeaderboard();
+  }catch(e){toast('❌ تعذر الحذف','err');}
 }
 
 // ===== RESULTS =====
@@ -1117,45 +1170,44 @@ async function loadResults(){
   }catch{el.innerHTML='<div class="empty"><div class="eico">❌</div><p>تعذر التحميل</p></div>';}
 }
 
-function saveResult(matchId,homeName,awayName){
+async function saveResult(matchId,homeName,awayName){
   const h=parseInt(document.getElementById('rh-'+matchId)?.value);
   const a=parseInt(document.getElementById('ra-'+matchId)?.value);
   if(isNaN(h)||isNaN(a)){toast('⚠️ أدخل النتيجة','err');return;}
-  localStorage.setItem(`gp_result_${matchId}`,JSON.stringify({home:h,away:a}));
-  const actualWdl=h>a?'home':h<a?'away':'draw';
-  const users=getUsers();let updated=0;
-  Object.values(users).forEach(u=>{
-    const up=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
-    const pred=up[matchId];if(!pred||pred.evaluated)return;
-    const wok=pred.wdl===actualWdl,eok=pred.s1===h&&pred.s2===a;
-    let pts=0;if(wok)pts+=3;if(eok)pts+=5;
-    pred.pts=pts;pred.evaluated=true;
-    if(wok)u.correct=(u.correct||0)+1;
-    u.points=(u.points||0)+pts;
-    localStorage.setItem(`gp_preds_${u.userId}`,JSON.stringify(up));
-    const stats=JSON.parse(localStorage.getItem(`gp_stats_${u.userId}`)||'{"pts":0,"correct":0,"total":0}');
-    stats.pts+=pts;if(wok)stats.correct++;
-    localStorage.setItem(`gp_stats_${u.userId}`,JSON.stringify(stats));
-    updated++;
-  });
-  setUsers(users);
-  toast(`✅ ${h}–${a} | نقاط ${updated} مستخدم`,'ok');
-  loadResults();renderStats();
-  if(currentUser){
-    const s=JSON.parse(localStorage.getItem(`gp_stats_${currentUser.userId}`)||'null');
-    if(s){userPts=s.pts;correctPreds=s.correct;totalPreds=s.total;}
-    buildLB();updateDash();
+  try{
+    const r=await fetch(`${API}/api/results`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({matchId:matchId.toString(),homeScore:h,awayScore:a})
+    });
+    const d=await r.json();
+    if(!r.ok){toast(d.error||'خطأ','err');return;}
+    toast(`✅ ${h}–${a} | تم توزيع نقاط ${d.updated} مستخدم`,'ok');
+    loadResults();
+    loadLeaderboard();
+    updateDash();
+  }catch(e){
+    toast('❌ تعذر حفظ النتيجة: '+e.message,'err');
   }
 }
 
 // ===== MANUAL PREDICTIONS =====
-function loadManualPreds(){
-  const users=getUsers();
+async function loadManualPreds(){
   const sel=document.getElementById('mpred-user-select');
   sel.innerHTML='<option value="">اختر مستخدماً...</option>';
-  Object.values(users).forEach(u=>{
-    sel.innerHTML+=`<option value="${u.email}">${u.name} (${u.email})</option>`;
-  });
+  try{
+    const r=await fetch(`${API}/api/users`);
+    const users=await r.json();
+    users.forEach(u=>{
+      sel.innerHTML+=`<option value="${u.email}">${u.name} (${u.email})</option>`;
+    });
+  }catch{
+    // fallback
+    const users=getUsers();
+    Object.values(users).forEach(u=>{
+      sel.innerHTML+=`<option value="${u.email}">${u.name} (${u.email})</option>`;
+    });
+  }
   document.getElementById('mpred-matches').innerHTML='<div class="empty"><div class="eico">👆</div><p>اختر مستخدماً أولاً</p></div>';
 }
 
@@ -1213,51 +1265,36 @@ function setMpredWDL(matchId,choice,btn){
   mpredWDL[matchId]=choice;
 }
 
-function saveAllManualPreds(){
+async function saveAllManualPreds(){
   const email=document.getElementById('mpred-user-select').value;
   if(!email){toast('⚠️ اختر مستخدماً أولاً','err');return;}
-  const users=getUsers();const u=users[email];
-  if(!u){toast('المستخدم غير موجود','err');return;}
-  const userPreds=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
   const matchIds=JSON.parse(document.getElementById('mpred-matches').dataset.matches||'[]');
-  let saved=0;
-  matchIds.forEach(matchId=>{
+  let saved=0,errors=0;
+  for(const matchId of matchIds){
     const wdlChoice=mpredWDL[matchId]||
       (document.getElementById(`mp-h-${matchId}`)?.classList.contains('sh')?'home':
        document.getElementById(`mp-d-${matchId}`)?.classList.contains('sd')?'draw':
        document.getElementById(`mp-a-${matchId}`)?.classList.contains('sa')?'away':null);
-    const s1v=document.getElementById(`mp-s1-${matchId}`)?.value;
-    const s2v=document.getElementById(`mp-s2-${matchId}`)?.value;
-    if(!wdlChoice)return;
-    const s1=parseInt(s1v)||0,s2=parseInt(s2v)||0;
-    const wdlLabel=wdlChoice==='home'?`🏠 ${allMatches.find(m=>m.id===matchId)?.home?.nameAr||''}`:
-      wdlChoice==='draw'?'🤝 تعادل':`✈️ ${allMatches.find(m=>m.id===matchId)?.away?.nameAr||''}`;
-    // احتساب النقاط من النتيجة الحقيقية
-    const savedResult=JSON.parse(localStorage.getItem(`gp_result_${matchId}`)||'null');
+    if(!wdlChoice)continue;
+    const s1=parseInt(document.getElementById(`mp-s1-${matchId}`)?.value)||0;
+    const s2=parseInt(document.getElementById(`mp-s2-${matchId}`)?.value)||0;
     const matchData=allMatches.find(m=>m.id===matchId);
-    const rH=savedResult?.home??matchData?.score?.home;
-    const rA=savedResult?.away??matchData?.score?.away;
-    let pts=0;
-    if(rH!==null&&rH!==undefined){
-      const actualWdl=rH>rA?'home':rH<rA?'away':'draw';
-      const wok=wdlChoice===actualWdl;const eok=s1===rH&&s2===rA;
-      if(wok)pts+=3;if(eok)pts+=5;
-    }
-    if(!userPreds[matchId]||!userPreds[matchId].confirmed){
-      userPreds[matchId]={wdl:wdlChoice,wdlLabel,s1,s2,confirmed:true,pts,evaluated:rH!==undefined&&rH!==null};
-      u.total=(u.total||0)+1;
-      if(pts>0){u.correct=(u.correct||0)+1;u.points=(u.points||0)+pts;}
-      saved++;
-    }
-  });
-  localStorage.setItem(`gp_preds_${u.userId}`,JSON.stringify(userPreds));
-  localStorage.setItem(`gp_stats_${u.userId}`,JSON.stringify({pts:u.points||0,correct:u.correct||0,total:u.total||0}));
-  setUsers(users);renderStats();renderUsers();
-  toast(`✅ تم حفظ ${saved} توقع للمستخدم ${u.name}`,'ok');
-  if(currentUser&&currentUser.email===email){
-    userPts=u.points||0;correctPreds=u.correct||0;totalPreds=u.total||0;
-    buildLB();updateDash();
+    const wdlLabel=wdlChoice==='home'?`🏠 ${matchData?.home?.nameAr||''}`:
+      wdlChoice==='draw'?'🤝 تعادل':`✈️ ${matchData?.away?.nameAr||''}`;
+    const rH=matchData?.score?.home;const rA=matchData?.score?.away;
+    try{
+      const r=await fetch(`${API}/api/predictions/manual`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,matchId:matchId.toString(),wdl:wdlChoice,wdlLabel,
+          scoreHome:s1,scoreAway:s2,homeScore:rH,awayScore:rA})
+      });
+      if(r.ok)saved++;else errors++;
+    }catch{errors++;}
   }
+  toast(`✅ تم حفظ ${saved} توقع${errors>0?' ('+errors+' تكرار)':''}`,'ok');
+  renderUsers();loadLeaderboard();
+  if(currentUser&&currentUser.email===email){loadLeaderboard();}
   loadManualPredMatches();
 }
 
