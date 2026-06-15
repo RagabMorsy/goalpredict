@@ -1205,31 +1205,27 @@ async function loadManualPreds(){
   try{
     const r=await fetch(`${API}/api/users`);
     const users=await r.json();
-    users.forEach(u=>{
-      sel.innerHTML+=`<option value="${u.email}">${u.name} (${u.email})</option>`;
+    // نحفظ قائمة المستخدمين عالمياً
+    window._adminUsers=users;
+    users.forEach((u,i)=>{
+      sel.innerHTML+=`<option value="${i}">${u.name} (${u.email})</option>`;
     });
-  }catch{
-    // fallback
-    const users=getUsers();
-    Object.values(users).forEach(u=>{
-      sel.innerHTML+=`<option value="${u.email}">${u.name} (${u.email})</option>`;
-    });
+  }catch(e){
+    sel.innerHTML+='<option disabled>❌ تعذر تحميل المستخدمين</option>';
   }
   document.getElementById('mpred-matches').innerHTML='<div class="empty"><div class="eico">👆</div><p>اختر مستخدماً أولاً</p></div>';
 }
 
 async function loadManualPredMatches(){
-  const email=document.getElementById('mpred-user-select').value;
-  if(!email)return;
+  const idx=document.getElementById('mpred-user-select').value;
+  if(idx==='')return;
   const el=document.getElementById('mpred-matches');
   el.innerHTML='<div class="loading"><div class="spinner"></div><br>جاري التحميل...</div>';
   try{
     const r=await fetch(`${API}/api/fixtures/all`);const matches=await r.json();
-    // جلب المستخدم من السيرفر
-    const ur=await fetch(`${API}/api/users`);
-    const allUsers=await ur.json();
-    const u=allUsers.find(x=>x.email===email);
-    if(!u){el.innerHTML='<div class="empty"><div class="eico">❌</div><p>المستخدم غير موجود في Supabase</p></div>';return;}
+    // استخدام المستخدم المحفوظ مسبقاً
+    const u=window._adminUsers?.[parseInt(idx)];
+    if(!u){el.innerHTML='<div class="empty"><div class="eico">❌</div><p>خطأ في تحميل المستخدم — حاول مجدداً</p></div>';return;}
     // جلب توقعاته الحالية
     const pr=await fetch(`${API}/api/predictions/${u.userId}`);
     const userPreds=pr.ok?await pr.json():{};
@@ -1279,8 +1275,11 @@ function setMpredWDL(matchId,choice,btn){
 }
 
 async function saveAllManualPreds(){
-  const email=document.getElementById('mpred-user-select').value;
-  if(!email){toast('⚠️ اختر مستخدماً أولاً','err');return;}
+  const idx=document.getElementById('mpred-user-select').value;
+  if(idx===''){toast('⚠️ اختر مستخدماً أولاً','err');return;}
+  const uObj=window._adminUsers?.[parseInt(idx)];
+  if(!uObj){toast('⚠️ خطأ في تحميل المستخدم','err');return;}
+  const email=uObj.email;
   const matchIds=JSON.parse(document.getElementById('mpred-matches').dataset.matches||'[]');
   let saved=0,errors=0;
   for(const matchId of matchIds){
