@@ -1067,13 +1067,18 @@ function exitAdmin(){
   document.getElementById('exit-btn').style.display='none';
   document.getElementById('apwd').value='';
 }
-function checkAdmin(){
+async function checkAdmin(){
   if(document.getElementById('apwd').value!==ADMIN_PWD){toast('❌ كلمة مرور خاطئة','err');return;}
   document.getElementById('admin-login').style.display='none';
   document.getElementById('admin-main').style.display='block';
   document.getElementById('admin-btns').style.display='flex';
   document.getElementById('exit-btn').style.display='none';
-  renderStats();renderUsers();showPanel('users');
+  // إظهار لوحة المستخدمين افتراضياً
+  ['users','results','manual-preds'].forEach(id=>{
+    document.getElementById('panel-'+id).style.display=id==='users'?'block':'none';
+  });
+  renderStats();
+  renderUsers();
 }
 function showPanel(p){
   ['users','results','manual-preds'].forEach(id=>{
