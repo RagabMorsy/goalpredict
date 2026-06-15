@@ -4,432 +4,548 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GoalPredict — كأس العالم 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#05080f;--surface:#0d1526;--card:#111d30;--border:#1a2d4a;
-  --gold:#c9a227;--red:#e63946;--green:#2ec4b6;--purple:#a78bfa;
-  --text:#e8edf5;--muted:#6b7a99;
+  --bg:#07090f;--dark:#0e1219;--card:#141820;--card2:#1a2030;
+  --border:#232b3a;--border2:#2a3448;
+  --gold:#d4a843;--gold2:#f0c060;--golddim:rgba(212,168,67,.12);
+  --red:#e8394a;--reddim:rgba(232,57,74,.12);
+  --green:#1db87a;--greendim:rgba(29,184,122,.12);
+  --text:#e2e8f4;--text2:#8b98b4;--text3:#4a5568;
+  --bebas:'Bebas Neue',sans-serif;--cairo:'Cairo',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:var(--cairo);min-height:100vh;overflow-x:hidden;}
 
-/* ===== SCREENS ===== */
+/* SCREENS */
 .screen{display:none;}
-#auth-screen.active{display:flex;align-items:center;justify-content:center;min-height:100vh;
-  background:radial-gradient(ellipse at 30% 20%,#0d1e35,var(--bg));padding:16px;flex-direction:column;}
-#main-screen.active{display:flex;flex-direction:column;min-height:100vh;}
-#admin-screen.active{display:flex;flex-direction:column;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;min-height:100vh;}
+#auth-screen.active{align-items:center;justify-content:center;padding:16px;
+  background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(212,168,67,.15) 0%,transparent 60%),var(--bg);}
 
-/* ===== AUTH ===== */
-.auth-wrap{width:100%;max-width:420px;}
-.wc-logo-box{background:linear-gradient(135deg,#050d1a,#0d1e35);border:1px solid rgba(201,162,39,.35);
-  border-bottom:none;border-radius:16px 16px 0 0;padding:20px;text-align:center;}
-.wc-trophy{width:90px;height:90px;object-fit:contain;margin:0 auto 8px;display:block;
-  filter:drop-shadow(0 4px 16px rgba(201,162,39,.4));}
-.wc-title{font-family:'Oswald',sans-serif;font-size:11px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;}
-.wc-name{font-family:'Oswald',sans-serif;font-size:20px;color:#fff;margin-top:2px;}
-.wc-flags{font-size:16px;letter-spacing:5px;margin-top:5px;opacity:.8;}
-.auth-box{background:var(--card);border:1px solid var(--border);border-radius:0 0 18px 18px;padding:24px 22px;}
-.auth-tabs{display:flex;background:var(--surface);border-radius:9px;padding:3px;margin-bottom:20px;gap:3px;}
-.auth-tab{flex:1;padding:9px;text-align:center;border-radius:7px;cursor:pointer;font-size:13px;font-weight:700;
-  color:var(--muted);border:none;background:transparent;font-family:'Cairo',sans-serif;transition:all .2s;}
-.auth-tab.active{background:var(--gold);color:#000;}
-.fg{margin-bottom:12px;}
-.fg label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;}
-.fg input,.fg select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:9px;
-  padding:10px 12px;color:var(--text);font-size:13px;font-family:'Cairo',sans-serif;outline:none;text-align:right;transition:border-color .2s;}
+/* AUTH */
+.auth-wrap{width:100%;max-width:400px;}
+.auth-hero{text-align:center;padding:24px 20px 18px;
+  background:linear-gradient(180deg,rgba(212,168,67,.07) 0%,transparent 100%);
+  border:1px solid rgba(212,168,67,.2);border-bottom:none;border-radius:18px 18px 0 0;}
+.trophy{width:80px;height:80px;object-fit:contain;margin:0 auto 10px;display:block;
+  filter:drop-shadow(0 0 20px rgba(212,168,67,.5));animation:glow 3s ease-in-out infinite;}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 14px rgba(212,168,67,.4))}50%{filter:drop-shadow(0 0 26px rgba(212,168,67,.7))}}
+.auth-wc-eye{font-family:var(--bebas);font-size:10px;letter-spacing:4px;color:var(--gold);opacity:.8;}
+.auth-wc-name{font-family:var(--bebas);font-size:26px;letter-spacing:1px;color:var(--text);line-height:1.1;}
+.auth-flags{font-size:16px;letter-spacing:6px;margin-top:7px;opacity:.7;}
+.auth-app{font-family:var(--bebas);font-size:12px;letter-spacing:5px;color:var(--gold);margin-top:9px;}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:0 0 18px 18px;padding:22px 18px;}
+.auth-tabs{display:flex;background:var(--dark);border-radius:9px;padding:3px;margin-bottom:18px;gap:3px;}
+.atab{flex:1;padding:8px;text-align:center;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;
+  color:var(--text2);border:none;background:transparent;font-family:var(--cairo);transition:all .2s;}
+.atab.active{background:var(--gold);color:#000;}
+.fg{margin-bottom:11px;}
+.fg label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:700;}
+.fg input,.fg select{width:100%;background:var(--dark);border:1px solid var(--border);border-radius:9px;
+  padding:10px 12px;color:var(--text);font-size:13px;font-family:var(--cairo);outline:none;text-align:right;transition:border-color .2s;}
 .fg input:focus,.fg select:focus{border-color:var(--gold);}
-.btn-gold{width:100%;padding:11px;background:var(--gold);color:#000;border:none;border-radius:10px;
-  font-size:14px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;transition:opacity .2s;}
-.btn-gold:hover{opacity:.9;}
-.admin-link{text-align:center;margin-top:12px;font-size:11px;color:var(--muted);}
-.admin-link a{color:var(--gold);cursor:pointer;text-decoration:none;}
+.btn-gold{width:100%;padding:11px;background:linear-gradient(135deg,var(--gold),#e8b830);color:#000;border:none;
+  border-radius:9px;font-size:13px;font-weight:800;font-family:var(--cairo);cursor:pointer;transition:all .2s;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(212,168,67,.3);}
+.admin-lnk{text-align:center;margin-top:12px;}
+.admin-lnk button{background:none;border:none;color:var(--text2);font-family:var(--cairo);font-size:11px;cursor:pointer;text-decoration:underline;}
 
-/* ===== TOPNAV ===== */
-.topnav{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;
-  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.topnav-logo{display:flex;align-items:center;gap:8px;}
-.topnav-trophy{width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(201,162,39,.5));}
-.topnav-text{font-family:'Oswald',sans-serif;font-size:15px;color:var(--gold);}
-.topnav-text span{display:block;font-size:9px;color:var(--muted);font-family:'Cairo',sans-serif;font-weight:400;letter-spacing:0;}
-.pts-badge{background:rgba(201,162,39,.15);color:var(--gold);padding:4px 10px;border-radius:18px;
-  font-size:11px;font-weight:700;border:1px solid rgba(201,162,39,.25);}
-.user-av{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),#e8a000);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;}
+/* TOPNAV */
+.topnav{background:rgba(14,18,25,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+  padding:9px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.nav-brand{display:flex;align-items:center;gap:8px;}
+.nav-trophy{width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 5px rgba(212,168,67,.5));}
+.nav-name{font-family:var(--bebas);font-size:16px;letter-spacing:2px;color:var(--gold);}
+.nav-sub{font-size:9px;color:var(--text2);}
+.pts-chip{background:var(--golddim);border:1px solid rgba(212,168,67,.2);color:var(--gold);
+  padding:4px 10px;border-radius:18px;font-size:11px;font-weight:700;}
+.av{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),#e8b830);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#000;flex-shrink:0;}
 
-/* ===== TABS ===== */
-.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+/* TABS */
+.tabs{background:var(--dark);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab-btn{padding:11px 14px;white-space:nowrap;font-size:11px;font-weight:600;color:var(--muted);
-  border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;
-  font-family:'Cairo',sans-serif;transition:all .2s;}
-.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tbtn{padding:11px 14px;white-space:nowrap;font-size:11px;font-weight:700;color:var(--text2);border:none;
+  background:transparent;cursor:pointer;border-bottom:2px solid transparent;font-family:var(--cairo);transition:all .2s;}
+.tbtn.active{color:var(--gold);border-bottom-color:var(--gold);}
 
-.content{padding:12px;max-width:640px;margin:0 auto;flex:1;}
-.tab-content{display:none;}
-.tab-content.active{display:block;}
+.content{padding:12px;max-width:600px;margin:0 auto;flex:1;width:100%;}
+.pane{display:none;}
+.pane.active{display:block;}
 
-/* ===== API BAR ===== */
-.api-bar{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);
-  border-radius:9px;padding:7px 11px;margin-bottom:11px;font-size:10px;color:var(--muted);}
-.api-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.api-dot.ok{background:var(--green);}
-.api-dot.loading{background:var(--gold);animation:blink 1s infinite;}
-.api-dot.err{background:var(--red);}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-@keyframes spin{to{transform:rotate(360deg);}}
+/* STATUS */
+.sbar{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);
+  border-radius:9px;padding:7px 11px;margin-bottom:11px;font-size:10px;color:var(--text2);}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dok{background:var(--green);box-shadow:0 0 5px var(--green);}
+.dload{background:var(--gold);animation:blink 1s infinite;}
+.derr{background:var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== DASH ===== */
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
-.dash-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;text-align:center;}
-.dash-val{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;}
-.dash-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+/* STATS */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px;}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;text-align:center;transition:border-color .2s;}
+.scard:hover{border-color:var(--border2);}
+.sval{font-family:var(--bebas);font-size:30px;letter-spacing:1px;line-height:1;}
+.slbl{font-size:10px;color:var(--text2);margin-top:2px;font-weight:600;}
 
-/* ===== PODIUM ===== */
-.podium{display:flex;align-items:flex-end;justify-content:center;gap:9px;margin-bottom:13px;padding:5px 0;}
-.pod-item{display:flex;flex-direction:column;align-items:center;gap:3px;}
-.pod-av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;}
-.pod-name{font-size:9px;font-weight:700;text-align:center;max-width:62px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pod-pts{font-family:'Oswald',sans-serif;font-size:11px;}
-.pod-block{border-radius:5px 5px 0 0;width:62px;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;}
+/* PODIUM */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:7px;margin-bottom:13px;padding:4px 0;}
+.pod{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.pod-av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#000;}
+.pod-nm{font-size:9px;font-weight:700;text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pod-pts{font-family:var(--bebas);font-size:12px;letter-spacing:1px;}
+.pod-blk{border-radius:5px 5px 0 0;width:62px;display:flex;align-items:center;justify-content:center;font-family:var(--bebas);font-size:18px;}
 .p1 .pod-av{width:48px;height:48px;font-size:19px;background:linear-gradient(135deg,#FFD700,#e8a000);}
-.p1 .pod-block{height:64px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);color:#FFD700;}
+.p1 .pod-blk{height:64px;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);color:#FFD700;}
 .p1 .pod-pts{color:#FFD700;}
 .p2 .pod-av{width:40px;height:40px;font-size:15px;background:linear-gradient(135deg,#C0C0C0,#888);}
-.p2 .pod-block{height:50px;background:rgba(192,192,192,.08);border:1px solid rgba(192,192,192,.2);color:#C0C0C0;}
+.p2 .pod-blk{height:48px;background:rgba(192,192,192,.06);border:1px solid rgba(192,192,192,.15);color:#C0C0C0;}
 .p2 .pod-pts{color:#C0C0C0;}
 .p3 .pod-av{width:34px;height:34px;font-size:13px;background:linear-gradient(135deg,#CD7F32,#8B4513);}
-.p3 .pod-block{height:36px;background:rgba(205,127,50,.08);border:1px solid rgba(205,127,50,.2);color:#CD7F32;}
+.p3 .pod-blk{height:34px;background:rgba(205,127,50,.06);border:1px solid rgba(205,127,50,.15);color:#CD7F32;}
 .p3 .pod-pts{color:#CD7F32;}
 
-/* ===== LB ===== */
-.lb-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
-.lb-hdr{padding:11px 14px;border-bottom:1px solid var(--border);font-weight:700;font-size:12px;display:flex;align-items:center;gap:6px;}
-.lb-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);gap:9px;}
+/* LB */
+.lb-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:11px;}
+.lb-hdr{padding:10px 13px;border-bottom:1px solid var(--border);font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;}
+.lb-row{display:flex;align-items:center;padding:9px 13px;border-bottom:1px solid var(--border);gap:9px;animation:fadeIn .3s ease;}
 .lb-row:last-child{border-bottom:none;}
-.lb-row.me{background:rgba(201,162,39,.07);}
-.lb-rank{font-family:'Oswald',sans-serif;font-size:13px;color:var(--muted);width:18px;text-align:center;flex-shrink:0;}
-.lb-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000;flex-shrink:0;}
+.lb-row.me{background:var(--golddim);}
+.lb-rank{font-family:var(--bebas);font-size:13px;color:var(--text2);width:18px;text-align:center;flex-shrink:0;}
+.lb-av{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#000;flex-shrink:0;}
 .lb-info{flex:1;min-width:0;}
-.lb-name{font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lb-sub{font-size:9px;color:var(--muted);}
-.lb-pts{font-family:'Oswald',sans-serif;font-size:15px;color:var(--gold);flex-shrink:0;}
+.lb-nm{font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lb-sub{font-size:9px;color:var(--text2);}
+.lb-pts{font-family:var(--bebas);font-size:17px;color:var(--gold);flex-shrink:0;}
 
-/* ===== MATCH CARD ===== */
+/* MATCH CARD */
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
-.sec-title{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;}
-.live-dot{width:7px;height:7px;background:var(--red);border-radius:50%;animation:blink 1s infinite;}
-.refresh-btn{font-size:10px;color:var(--gold);background:transparent;border:1px solid rgba(201,162,39,.25);
-  padding:3px 9px;border-radius:6px;cursor:pointer;font-family:'Cairo',sans-serif;}
+.sec-t{font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;}
+.live-badge{background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:1px;animation:pulse 1.2s infinite;}
+.refresh-btn{font-size:10px;color:var(--gold);background:var(--golddim);border:1px solid rgba(212,168,67,.2);padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--cairo);font-weight:600;}
 
-.match-card{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--gold);
-  border-radius:13px;padding:12px;margin-bottom:8px;}
-.match-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
-.match-group{font-size:9px;background:rgba(201,162,39,.12);color:var(--gold);padding:2px 7px;border-radius:10px;font-weight:700;}
-.match-st{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;}
-.st-ns{background:rgba(107,122,153,.12);color:var(--muted);}
-.st-live{background:rgba(230,57,70,.12);color:var(--red);}
-.st-ft{background:rgba(46,196,182,.12);color:var(--green);}
+.mcard{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:8px;animation:fadeIn .3s ease;transition:border-color .2s;}
+.mcard:hover{border-color:var(--border2);}
+.mcard-top{background:linear-gradient(135deg,rgba(212,168,67,.05) 0%,transparent 60%);border-bottom:1px solid var(--border);padding:7px 12px;display:flex;align-items:center;justify-content:space-between;}
+.wc-tag{background:linear-gradient(135deg,var(--gold),#e8b830);color:#000;font-size:8px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:1px;font-family:var(--bebas);}
+.mgroup{font-size:9px;color:var(--text2);font-weight:700;}
+.mst{font-size:9px;font-weight:800;padding:2px 8px;border-radius:5px;}
+.st-ns{background:rgba(139,152,180,.1);color:var(--text2);}
+.st-live{background:var(--reddim);color:var(--red);animation:pulse 1.2s infinite;}
+.st-ft{background:var(--greendim);color:var(--green);}
 
-.match-teams{display:flex;align-items:center;gap:7px;}
+.mbody{padding:11px;}
+.mteams{display:flex;align-items:center;gap:7px;}
 .team{flex:1;text-align:center;}
-.team-flag{font-size:24px;display:block;margin-bottom:3px;}
-.team-name{font-size:10px;font-weight:700;}
-.score-box{text-align:center;min-width:60px;}
-.score-num{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:3px;}
-.score-vs{font-size:13px;color:var(--muted);letter-spacing:2px;}
-.match-time-disp{font-size:10px;color:var(--gold);margin-top:2px;font-weight:700;}
+.tflag{font-size:28px;display:block;margin-bottom:3px;line-height:1;}
+.tname{font-size:10px;font-weight:700;line-height:1.3;}
+.sbox{text-align:center;min-width:65px;}
+.snum{font-family:var(--bebas);font-size:28px;letter-spacing:3px;line-height:1;color:var(--text);}
+.svs{font-family:var(--bebas);font-size:15px;color:var(--text3);letter-spacing:3px;}
+.stime{font-family:var(--bebas);font-size:12px;color:var(--gold);margin-top:2px;letter-spacing:1px;}
 
-/* ===== PREDICT ===== */
-.predict-zone{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
-.predict-lbl{font-size:10px;color:var(--muted);margin-bottom:6px;text-align:center;}
-.predict-btns{display:flex;gap:5px;margin-bottom:6px;}
-.pbtn{flex:1;padding:7px 2px;border-radius:7px;border:1px solid var(--border);background:var(--surface);
-  color:var(--text);font-size:9px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;transition:all .2s;text-align:center;}
-.pbtn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
-.pbtn.sel-h{background:rgba(201,162,39,.15);border-color:var(--gold);color:var(--gold);}
-.pbtn.sel-d{background:rgba(46,196,182,.15);border-color:var(--green);color:var(--green);}
-.pbtn.sel-a{background:rgba(230,57,70,.15);border-color:var(--red);color:var(--red);}
-.pbtn.correct{background:rgba(46,196,182,.2);border-color:var(--green);color:var(--green);}
-.pbtn.wrong{opacity:.35;cursor:default;}
-.score-row{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--surface);border-radius:8px;padding:8px;}
-.score-lbl{font-size:9px;color:var(--muted);}
-.score-inp{width:44px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:7px;
-  color:#fff;font-size:17px;font-family:'Oswald',sans-serif;text-align:center;outline:none;transition:border-color .2s;}
-.score-inp:focus{border-color:var(--gold);}
-.score-inp:disabled{opacity:.5;}
-.score-sep{font-family:'Oswald',sans-serif;font-size:17px;color:var(--muted);}
-.confirm-btn{width:100%;margin-top:6px;padding:8px;background:var(--gold);color:#000;border:none;
-  border-radius:8px;font-size:11px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;}
-.confirm-btn:disabled{opacity:.3;cursor:not-allowed;}
-.pred-done{font-size:10px;color:var(--green);text-align:center;margin-top:5px;}
+/* PREDICT */
+.pzone{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.plbl{font-size:10px;color:var(--text2);margin-bottom:6px;text-align:center;font-weight:600;}
+.pbtns{display:flex;gap:5px;margin-bottom:6px;}
+.pbtn{flex:1;padding:8px 3px;border-radius:7px;border:1px solid var(--border);background:var(--dark);color:var(--text);
+  font-size:10px;font-weight:700;font-family:var(--cairo);cursor:pointer;transition:all .2s;text-align:center;line-height:1.3;}
+.pbtn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);background:var(--golddim);}
+.pbtn.sh{background:var(--golddim);border-color:var(--gold);color:var(--gold);}
+.pbtn.sd{background:var(--greendim);border-color:var(--green);color:var(--green);}
+.pbtn.sa{background:var(--reddim);border-color:var(--red);color:var(--red);}
+.pbtn.correct{background:var(--greendim);border-color:var(--green);color:var(--green);}
+.pbtn.wrong{opacity:.3;cursor:default;}
+.pbtn:disabled{cursor:default;}
+.exact{background:var(--dark);border-radius:9px;padding:9px;}
+.exact-lbl{font-size:9px;color:var(--text2);text-align:center;margin-bottom:7px;font-weight:700;}
+.sinps{display:flex;align-items:center;justify-content:center;gap:7px;}
+.sinp-w{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.sinp-w span{font-size:9px;color:var(--text2);font-weight:600;}
+.sinp{width:44px;height:38px;background:var(--card);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-size:19px;font-family:var(--bebas);text-align:center;outline:none;transition:border-color .2s;letter-spacing:1px;}
+.sinp:focus{border-color:var(--gold);}
+.sinp:disabled{opacity:.5;}
+.ssep{font-family:var(--bebas);font-size:19px;color:var(--text3);}
+.cfbtn{width:100%;margin-top:7px;padding:9px;background:linear-gradient(135deg,var(--gold),#e8b830);color:#000;border:none;
+  border-radius:8px;font-size:11px;font-weight:800;font-family:var(--cairo);cursor:pointer;transition:all .2s;}
+.cfbtn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(212,168,67,.3);}
+.cfbtn:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none;}
+.psaved{font-size:10px;color:var(--green);text-align:center;margin-top:5px;font-weight:700;}
 
-/* ===== GROUPS ===== */
-.grp-hdr{background:rgba(201,162,39,.1);border:1px solid rgba(201,162,39,.2);border-radius:9px;
-  padding:6px 11px;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--gold);}
-.grp-tbl{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:10px;}
-.gt-hdr{display:grid;grid-template-columns:1fr 22px 22px 22px 22px 26px;gap:3px;
-  padding:6px 10px;background:var(--surface);font-size:9px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);}
-.gt-row{display:grid;grid-template-columns:1fr 22px 22px 22px 22px 26px;gap:3px;
-  padding:7px 10px;border-bottom:1px solid var(--border);font-size:10px;align-items:center;}
-.gt-row:last-child{border-bottom:none;}
-.gt-row.adv{background:rgba(46,196,182,.05);}
-.gt-team{display:flex;align-items:center;gap:4px;font-weight:600;}
-.gt-cell{text-align:center;color:var(--muted);}
-.gt-pts{text-align:center;font-family:'Oswald',sans-serif;font-size:13px;color:var(--gold);}
+/* GROUPS */
+.glbl{background:linear-gradient(135deg,rgba(212,168,67,.1),rgba(212,168,67,.03));border:1px solid rgba(212,168,67,.18);
+  border-radius:8px;padding:6px 11px;margin-bottom:6px;font-size:11px;font-weight:800;color:var(--gold);display:flex;align-items:center;gap:5px;}
+.gtbl{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:11px;}
+.gthdr{display:grid;grid-template-columns:1fr 24px 24px 24px 24px 28px;gap:2px;padding:6px 10px;
+  background:var(--dark);font-size:9px;color:var(--text3);font-weight:800;border-bottom:1px solid var(--border);letter-spacing:.5px;}
+.gtrow{display:grid;grid-template-columns:1fr 24px 24px 24px 24px 28px;gap:2px;padding:8px 10px;
+  border-bottom:1px solid var(--border);font-size:10px;align-items:center;transition:background .15s;}
+.gtrow:last-child{border-bottom:none;}
+.gtrow.top2{background:rgba(29,184,122,.04);}
+.gtrow:hover{background:rgba(255,255,255,.015);}
+.gtteam{display:flex;align-items:center;gap:5px;font-weight:700;}
+.gtadv{font-size:8px;color:var(--green);margin-right:2px;font-weight:800;}
+.gtcell{text-align:center;color:var(--text2);font-weight:600;}
+.gtpts{text-align:center;font-family:var(--bebas);font-size:14px;color:var(--gold);}
 
-/* ===== NOTIFS ===== */
-.notif-card{background:var(--card);border:1px solid var(--border);border-radius:11px;
-  padding:11px;margin-bottom:7px;display:flex;align-items:flex-start;gap:9px;}
-.notif-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.notif-body{flex:1;}
-.notif-title{font-size:11px;font-weight:700;margin-bottom:2px;}
-.notif-desc{font-size:10px;color:var(--muted);line-height:1.5;}
-.notif-time{font-size:9px;color:var(--muted);margin-top:3px;}
-.notif-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:3px;}
+/* NOTIFS */
+.ncard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px;margin-bottom:7px;
+  display:flex;align-items:flex-start;gap:9px;animation:fadeIn .3s ease;}
+.nic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.nbody{flex:1;}
+.ntitle{font-size:11px;font-weight:800;margin-bottom:2px;}
+.ndesc{font-size:10px;color:var(--text2);line-height:1.5;}
+.ntime{font-size:9px;color:var(--text3);margin-top:3px;font-weight:600;}
+.ndot{width:6px;height:6px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:3px;}
 
-/* ===== ADMIN ===== */
-.admin-topnav{background:#0a0a0a;border-bottom:2px solid var(--red);padding:12px 16px;
-  display:flex;align-items:center;justify-content:space-between;}
-.admin-title{font-family:'Oswald',sans-serif;font-size:18px;color:var(--red);letter-spacing:1px;}
-.admin-content{padding:16px;max-width:860px;margin:0 auto;}
-.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
-.admin-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
-.admin-card h3{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--gold);display:flex;align-items:center;gap:6px;}
-.admin-table{width:100%;border-collapse:collapse;font-size:11px;}
-.admin-table th{text-align:right;padding:7px 8px;background:var(--surface);color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);}
-.admin-table td{padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
-.admin-table tr:last-child td{border-bottom:none;}
-.admin-table tr:hover td{background:rgba(255,255,255,.02);}
-.btn-sm-red{padding:4px 10px;background:rgba(230,57,70,.15);color:var(--red);border:1px solid rgba(230,57,70,.3);
-  border-radius:6px;font-size:10px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;}
-.btn-sm-green{padding:4px 10px;background:rgba(46,196,182,.15);color:var(--green);border:1px solid rgba(46,196,182,.3);
-  border-radius:6px;font-size:10px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;}
-.btn-sm-gold{padding:4px 10px;background:rgba(201,162,39,.15);color:var(--gold);border:1px solid rgba(201,162,39,.3);
-  border-radius:6px;font-size:10px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;}
-.admin-full{grid-column:1/-1;}
-.match-result-form{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px;}
-.match-result-form input{width:44px;height:32px;background:var(--surface);border:1px solid var(--border);
-  border-radius:7px;color:#fff;font-size:16px;font-family:'Oswald',sans-serif;text-align:center;outline:none;}
-.match-result-form input:focus{border-color:var(--gold);}
-.match-mini{font-size:10px;color:var(--muted);}
-.result-saved{color:var(--green);font-size:10px;font-weight:700;}
-.stat-num{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:var(--gold);}
-.stat-lbl{font-size:10px;color:var(--muted);}
-.admin-stat-row{display:flex;gap:16px;margin-bottom:14px;}
-.admin-stat{text-align:center;}
+/* ADMIN */
+#admin-screen.active{background:#060810;}
+.admin-nav{background:#0a0c14;border-bottom:1px solid rgba(232,57,74,.25);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;}
+.admin-brand{font-family:var(--bebas);font-size:17px;letter-spacing:2px;color:var(--red);}
+.admin-content{padding:14px;max-width:900px;margin:0 auto;}
+.admin-login-wrap{max-width:320px;margin:40px auto;}
+.astats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px;}
+.astat{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;text-align:center;}
+.astat-val{font-family:var(--bebas);font-size:28px;color:var(--gold);}
+.astat-lbl{font-size:10px;color:var(--text2);margin-top:1px;font-weight:700;}
+.asec{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:13px;}
+.asec-hdr{padding:11px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.015);}
+.asearch{width:100%;background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:7px 11px;
+  color:var(--text);font-family:var(--cairo);font-size:11px;outline:none;text-align:right;margin-bottom:11px;}
+.asearch:focus{border-color:var(--gold);}
+.atbl{width:100%;border-collapse:collapse;font-size:11px;}
+.atbl th{text-align:right;padding:7px 9px;background:var(--dark);color:var(--text2);font-weight:800;border-bottom:1px solid var(--border);font-size:10px;}
+.atbl td{padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.atbl tr:last-child td{border-bottom:none;}
+.atbl tr:hover td{background:rgba(255,255,255,.015);}
+.bxs{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;font-family:var(--cairo);cursor:pointer;border:1px solid;margin-left:3px;transition:all .2s;}
+.bxs:hover{transform:translateY(-1px);}
+.bxs-red{background:var(--reddim);color:var(--red);border-color:rgba(232,57,74,.3);}
+.bxs-green{background:var(--greendim);color:var(--green);border-color:rgba(29,184,122,.3);}
+.bxs-gold{background:var(--golddim);color:var(--gold);border-color:rgba(212,168,67,.3);}
+.bxs-blue{background:rgba(59,130,246,.12);color:#60a5fa;border-color:rgba(59,130,246,.3);}
+.rinp{width:36px;height:28px;background:var(--dark);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-size:14px;font-family:var(--bebas);text-align:center;outline:none;letter-spacing:1px;}
+.rinp:focus{border-color:var(--gold);}
+.saved-tag{font-size:9px;color:var(--green);font-weight:800;}
 
-/* ===== BOTTOMNAV ===== */
-.bottomnav{background:var(--surface);border-top:1px solid var(--border);display:flex;position:sticky;bottom:0;z-index:100;}
-.nav-btn{flex:1;padding:9px 4px;text-align:center;cursor:pointer;border:none;background:transparent;font-family:'Cairo',sans-serif;}
-.nav-btn .ni{font-size:17px;display:block;}
-.nav-btn .nl{font-size:8px;color:var(--muted);margin-top:1px;display:block;}
-.nav-btn.active .nl{color:var(--gold);}
+/* MANUAL PRED TABLE */
+.mpred-section{margin-top:14px;}
+.mpred-hdr{font-size:11px;font-weight:800;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.user-select-row{display:flex;gap:8px;margin-bottom:11px;align-items:center;}
+.user-select-row select{flex:1;background:var(--dark);border:1px solid var(--border);border-radius:8px;
+  padding:8px 11px;color:var(--text);font-family:var(--cairo);font-size:12px;outline:none;}
+.user-select-row select:focus{border-color:var(--gold);}
+.mpred-card{background:var(--dark);border:1px solid var(--border);border-radius:9px;padding:10px;margin-bottom:6px;}
+.mpred-match{font-size:11px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.mpred-btns{display:flex;gap:5px;margin-bottom:5px;}
+.mpred-score{display:flex;align-items:center;gap:5px;}
+.mpred-score input{width:36px;height:28px;background:var(--card);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-size:14px;font-family:var(--bebas);text-align:center;outline:none;}
+.mpred-score input:focus{border-color:var(--gold);}
 
-/* ===== MISC ===== */
-.loading{text-align:center;padding:24px;color:var(--muted);font-size:11px;}
-.spinner{display:inline-block;width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:7px;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:300;display:none;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--card);border:1px solid var(--gold);border-radius:16px;padding:24px 18px;width:100%;max-width:320px;text-align:center;}
-.modal-emoji{font-size:34px;margin-bottom:6px;}
-.modal h3{font-size:16px;font-weight:700;margin-bottom:4px;}
-.modal-pts{font-family:'Oswald',sans-serif;font-size:42px;color:var(--gold);margin-bottom:4px;}
-.modal p{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
-.modal-close{padding:9px 26px;background:var(--gold);color:#000;border:none;border-radius:9px;font-size:12px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;}
-.toast{position:fixed;bottom:65px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--gold);
-  color:#000;padding:9px 18px;border-radius:24px;font-size:11px;font-weight:700;opacity:0;transition:all .3s;
-  z-index:400;white-space:nowrap;pointer-events:none;}
+/* BOTTOMNAV */
+.bnav{background:rgba(14,18,25,.97);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;position:sticky;bottom:0;z-index:100;}
+.nbtn{flex:1;padding:9px 3px 8px;text-align:center;cursor:pointer;border:none;background:transparent;font-family:var(--cairo);transition:all .2s;}
+.nbtn .ni{font-size:17px;display:block;}
+.nbtn .nl{font-size:8px;color:var(--text2);margin-top:1px;display:block;font-weight:700;}
+.nbtn.active .nl{color:var(--gold);}
+.nbtn.active .ni{filter:drop-shadow(0 0 5px rgba(212,168,67,.5));}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);z-index:300;display:none;align-items:center;justify-content:center;padding:14px;}
+.modal-ov.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 18px;width:100%;max-width:300px;text-align:center;animation:fadeIn .3s ease;}
+.modal-emoji{font-size:38px;margin-bottom:6px;}
+.modal-title{font-family:var(--bebas);font-size:20px;letter-spacing:1px;margin-bottom:3px;}
+.modal-pts{font-family:var(--bebas);font-size:48px;color:var(--gold);line-height:1;margin-bottom:3px;}
+.modal-desc{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:14px;}
+.modal-close{padding:9px 26px;background:linear-gradient(135deg,var(--gold),#e8b830);color:#000;border:none;border-radius:9px;font-size:12px;font-weight:800;font-family:var(--cairo);cursor:pointer;}
+
+/* TOAST */
+.toast{position:fixed;bottom:66px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--gold);color:#000;
+  padding:8px 16px;border-radius:22px;font-size:11px;font-weight:800;opacity:0;transition:all .3s;z-index:500;white-space:nowrap;pointer-events:none;font-family:var(--cairo);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.err{background:var(--red);color:#fff;}
-.toast.info{background:var(--green);color:#000;}
-.badge-admin{background:var(--red);color:#fff;font-size:9px;padding:1px 6px;border-radius:8px;margin-right:4px;}
+.toast.ok{background:var(--green);color:#fff;}
+
+.loading{text-align:center;padding:24px;color:var(--text2);font-size:11px;font-weight:600;}
+.spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:7px;}
+.empty{text-align:center;padding:24px 16px;color:var(--text2);}
+.empty .eico{font-size:32px;margin-bottom:7px;}
+.empty p{font-size:11px;font-weight:600;}
+
+@media(max-width:380px){.pbtn{font-size:9px;padding:7px 2px;}.snum{font-size:24px;}.tflag{font-size:24px;}.sval{font-size:26px;}}
 </style>
 </head>
 <body>
 
-<!-- ========== AUTH ========== -->
+<!-- AUTH -->
 <div id="auth-screen" class="screen active">
   <div class="auth-wrap">
-    <div class="wc-logo-box">
-      <img class="wc-trophy" src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/2026_FIFA_World_Cup_emblem.svg/800px-2026_FIFA_World_Cup_emblem.svg.png"
-        onerror="this.src='https://www.fifa.com/image/upload/t_s4/assets/img/thumbnail/wc26-trophy.png';this.onerror=null;" alt="كأس العالم 2026">
-      <div class="wc-title">🏆 FIFA WORLD CUP</div>
-      <div class="wc-name">CANADA · USA · MEXICO 2026</div>
-      <div class="wc-flags">🇨🇦🇺🇸🇲🇽</div>
+    <div class="auth-hero">
+      <svg class="trophy" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- كأس العالم 2026 SVG -->
+        <defs>
+          <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700"/>
+            <stop offset="50%" style="stop-color:#FFF0A0"/>
+            <stop offset="100%" style="stop-color:#C8960C"/>
+          </linearGradient>
+          <linearGradient id="tg2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#e8c840"/>
+            <stop offset="100%" style="stop-color:#a07000"/>
+          </linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+        </defs>
+        <!-- قاعدة الكأس -->
+        <rect x="30" y="100" width="40" height="5" rx="2" fill="url(#tg2)"/>
+        <rect x="33" y="95" width="34" height="7" rx="2" fill="url(#tg2)"/>
+        <rect x="38" y="88" width="24" height="8" rx="1" fill="url(#tg)"/>
+        <!-- جسم الكأس -->
+        <path d="M 38 88 Q 36 70 30 55 Q 26 45 28 35 Q 50 42 72 35 Q 74 45 70 55 Q 64 70 62 88 Z" fill="url(#tg)" filter="url(#glow)"/>
+        <!-- مقابض الكأس -->
+        <path d="M 28 35 Q 15 38 16 52 Q 17 62 28 58" stroke="url(#tg)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M 72 35 Q 85 38 84 52 Q 83 62 72 58" stroke="url(#tg)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- خطوط بريق -->
+        <path d="M 42 45 Q 44 55 43 65" stroke="#FFF8DC" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M 50 42 Q 51 52 50 68" stroke="#FFF8DC" stroke-width="1.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <!-- قمة الكأس - الكرة -->
+        <circle cx="50" cy="28" r="14" fill="url(#tg)" filter="url(#glow)"/>
+        <circle cx="50" cy="28" r="14" fill="none" stroke="#FFF0A0" stroke-width="1" opacity="0.5"/>
+        <!-- خطوط الكرة -->
+        <path d="M 50 14 Q 58 21 58 28 Q 58 35 50 42" stroke="#C8960C" stroke-width="1" fill="none" opacity="0.6"/>
+        <path d="M 36 28 Q 43 21 50 14" stroke="#C8960C" stroke-width="1" fill="none" opacity="0.6"/>
+        <path d="M 36 28 Q 43 35 50 42" stroke="#C8960C" stroke-width="1" fill="none" opacity="0.6"/>
+        <!-- نجمة بريق -->
+        <circle cx="44" cy="22" r="2" fill="#FFFACD" opacity="0.8"/>
+        <circle cx="44" cy="22" r="1" fill="#fff"/>
+        <!-- رقم 26 -->
+        <text x="50" y="115" text-anchor="middle" font-family="Arial Black" font-size="9" font-weight="900" fill="#d4a843" letter-spacing="2">2026</text>
+      </svg>
+      <div class="auth-wc-eye">FIFA WORLD CUP™</div>
+      <div class="auth-wc-name">CANADA · USA · MEXICO<br>2026</div>
+      <div class="auth-flags">🇨🇦 🇺🇸 🇲🇽</div>
+      <div class="auth-app">⚽ GOALPREDICT</div>
     </div>
     <div class="auth-box">
       <div class="auth-tabs">
-        <button class="auth-tab active" onclick="authTab('login',this)">تسجيل دخول</button>
-        <button class="auth-tab" onclick="authTab('register',this)">حساب جديد</button>
+        <button class="atab active" onclick="authTab('login',this)">تسجيل دخول</button>
+        <button class="atab" onclick="authTab('register',this)">حساب جديد</button>
       </div>
-      <div id="login-form">
+      <div id="frm-login">
         <div class="fg"><label>البريد الإلكتروني</label><input type="email" id="l-email" placeholder="example@email.com"></div>
-        <div class="fg"><label>كلمة المرور</label><input type="password" id="l-pass" placeholder="••••••••"></div>
+        <div class="fg"><label>كلمة المرور</label><input type="password" id="l-pass" placeholder="••••••••" onkeypress="if(event.key==='Enter')doLogin()"></div>
         <button class="btn-gold" onclick="doLogin()">دخول</button>
       </div>
-      <div id="reg-form" style="display:none">
-        <div class="fg"><label>الاسم الكامل</label><input type="text" id="r-name" placeholder="اسمك"></div>
+      <div id="frm-reg" style="display:none">
+        <div class="fg"><label>الاسم الكامل</label><input type="text" id="r-name" placeholder="اسمك الكامل"></div>
         <div class="fg"><label>البريد الإلكتروني</label><input type="email" id="r-email" placeholder="example@email.com"></div>
-        <div class="fg"><label>كلمة المرور</label><input type="password" id="r-pass" placeholder="••••••••"></div>
+        <div class="fg"><label>كلمة المرور</label><input type="password" id="r-pass" placeholder="••••••••" onkeypress="if(event.key==='Enter')doRegister()"></div>
         <button class="btn-gold" onclick="doRegister()">إنشاء الحساب</button>
       </div>
-      <div class="admin-link"><a onclick="goAdmin()">🔐 لوحة الإدارة</a></div>
+      <div class="admin-lnk"><button onclick="goAdmin()">🔐 دخول الإدارة</button></div>
     </div>
   </div>
 </div>
 
-<!-- ========== MAIN ========== -->
+<!-- MAIN -->
 <div id="main-screen" class="screen">
   <div class="topnav">
-    <div class="topnav-logo">
-      <img class="topnav-trophy" src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/2026_FIFA_World_Cup_emblem.svg/800px-2026_FIFA_World_Cup_emblem.svg.png"
-        onerror="this.onerror=null;" alt="">
-      <div class="topnav-text">GOALPREDICT<span>🏆 كأس العالم 2026</span></div>
+    <div class="nav-brand">
+      <svg class="nav-trophy" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#FFF0A0"/><stop offset="100%" style="stop-color:#C8960C"/></linearGradient></defs>
+        <rect x="30" y="100" width="40" height="5" rx="2" fill="#a07000"/>
+        <rect x="33" y="95" width="34" height="7" rx="2" fill="#a07000"/>
+        <rect x="38" y="88" width="24" height="8" rx="1" fill="url(#ng)"/>
+        <path d="M 38 88 Q 36 70 30 55 Q 26 45 28 35 Q 50 42 72 35 Q 74 45 70 55 Q 64 70 62 88 Z" fill="url(#ng)"/>
+        <path d="M 28 35 Q 15 38 16 52 Q 17 62 28 58" stroke="url(#ng)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M 72 35 Q 85 38 84 52 Q 83 62 72 58" stroke="url(#ng)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <circle cx="50" cy="28" r="14" fill="url(#ng)"/>
+        <circle cx="44" cy="22" r="1.5" fill="#fff" opacity="0.8"/>
+      </svg>
+      <div><div class="nav-name">GOALPREDICT</div><div class="nav-sub">🏆 كأس العالم 2026</div></div>
     </div>
-    <div style="display:flex;align-items:center;gap:7px;">
-      <div class="pts-badge" id="pts-disp">🏆 0</div>
-      <div class="user-av" id="user-av">؟</div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="pts-chip" id="pts-disp">🏆 0</div>
+      <div class="av" id="user-av">؟</div>
     </div>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('home',this)">🏠 الرئيسية</button>
-    <button class="tab-btn" onclick="switchTab('matches',this)">⚽ المباريات</button>
-    <button class="tab-btn" onclick="switchTab('groups',this)">📊 المجموعات</button>
-    <button class="tab-btn" onclick="switchTab('notifs',this)">🔔 إشعارات</button>
-    <button class="tab-btn" onclick="switchTab('lb',this)">🏆 المتصدرون</button>
-    <button class="tab-btn" onclick="switchTab('profile',this)">👤 حسابي</button>
+    <button class="tbtn active" onclick="switchTab('home',this)">🏠 الرئيسية</button>
+    <button class="tbtn" onclick="switchTab('matches',this)">⚽ المباريات</button>
+    <button class="tbtn" onclick="switchTab('groups',this)">📊 المجموعات</button>
+    <button class="tbtn" onclick="switchTab('notifs',this)">🔔 إشعارات</button>
+    <button class="tbtn" onclick="switchTab('lb',this)">🏆 المتصدرون</button>
+    <button class="tbtn" onclick="switchTab('profile',this)">👤 حسابي</button>
   </div>
   <div class="content">
+
     <!-- HOME -->
-    <div class="tab-content active" id="tab-home">
-      <div class="api-bar"><div class="api-dot loading" id="api-dot"></div><span id="api-msg">جاري الاتصال...</span></div>
-      <div class="dash-grid">
-        <div class="dash-card"><div class="dash-val" style="color:var(--gold)" id="d-pts">0</div><div class="dash-lbl">نقاطي الكلية</div></div>
-        <div class="dash-card"><div class="dash-val" style="color:var(--green)" id="d-rank">#—</div><div class="dash-lbl">مرتبتي</div></div>
-        <div class="dash-card"><div class="dash-val" style="color:var(--purple)" id="d-correct">0</div><div class="dash-lbl">توقعات صحيحة</div></div>
-        <div class="dash-card"><div class="dash-val" style="color:var(--red)" id="d-acc">0%</div><div class="dash-lbl">نسبة الدقة</div></div>
+    <div class="pane active" id="pane-home">
+      <div class="sbar"><div class="sdot dload" id="api-dot"></div><span id="api-msg">جاري الاتصال...</span></div>
+      <div class="sgrid">
+        <div class="scard"><div class="sval" style="color:var(--gold)" id="d-pts">0</div><div class="slbl">نقاطي الكلية</div></div>
+        <div class="scard"><div class="sval" style="color:var(--green)" id="d-rank">#—</div><div class="slbl">مرتبتي</div></div>
+        <div class="scard"><div class="sval" style="color:#a78bfa" id="d-correct">0</div><div class="slbl">توقعات صحيحة</div></div>
+        <div class="scard"><div class="sval" style="color:var(--red)" id="d-acc">0%</div><div class="slbl">نسبة الدقة</div></div>
       </div>
-      <div class="sec-hdr"><div class="sec-title">🥇 المتصدرون الآن</div></div>
+      <div class="sec-hdr"><div class="sec-t">🥇 المتصدرون</div></div>
       <div class="podium" id="home-podium"><div class="loading"><div class="spinner"></div></div></div>
       <div class="lb-card" id="home-lb"><div class="lb-hdr">🏆 أفضل 5</div><div class="loading"><div class="spinner"></div></div></div>
     </div>
+
     <!-- MATCHES -->
-    <div class="tab-content" id="tab-matches">
+    <div class="pane" id="pane-matches">
       <div class="sec-hdr">
-        <div class="sec-title"><div class="live-dot"></div> مباريات اليوم</div>
+        <div class="sec-t"><span class="live-badge">LIVE</span> مباريات كأس العالم 2026</div>
         <button class="refresh-btn" onclick="loadMatches()">🔄 تحديث</button>
       </div>
       <div id="matches-list"><div class="loading"><div class="spinner"></div><br>جاري التحميل...</div></div>
     </div>
+
     <!-- GROUPS -->
-    <div class="tab-content" id="tab-groups">
-      <div class="sec-hdr"><div class="sec-title">📊 ترتيب المجموعات</div><button class="refresh-btn" onclick="loadGroups()">🔄 تحديث</button></div>
+    <div class="pane" id="pane-groups">
+      <div class="sec-hdr">
+        <div class="sec-t">📊 ترتيب المجموعات</div>
+        <button class="refresh-btn" onclick="loadGroups()">🔄 تحديث</button>
+      </div>
       <div id="groups-list"><div class="loading"><div class="spinner"></div><br>جاري التحميل...</div></div>
     </div>
+
     <!-- NOTIFS -->
-    <div class="tab-content" id="tab-notifs">
-      <div class="sec-hdr"><div class="sec-title">🔔 الإشعارات</div></div>
+    <div class="pane" id="pane-notifs">
+      <div class="sec-hdr"><div class="sec-t">🔔 الإشعارات</div></div>
       <div id="notif-list">
-        <div class="notif-card">
-          <div class="notif-icon" style="background:rgba(201,162,39,.15)">🏆</div>
-          <div class="notif-body">
-            <div class="notif-title">مرحباً بك في GoalPredict!</div>
-            <div class="notif-desc">توقع نتائج كأس العالم 2026 واجمع النقاط. +3 لكل توقع صحيح، +5 للنتيجة الدقيقة!</div>
-            <div class="notif-time">الآن</div>
+        <div class="ncard">
+          <div class="nic" style="background:var(--golddim)">🏆</div>
+          <div class="nbody">
+            <div class="ntitle">أهلاً بك في GoalPredict!</div>
+            <div class="ndesc">توقع نتائج كأس العالم 2026 واجمع النقاط. +3 لكل توقع صحيح، +5 للنتيجة الدقيقة!</div>
+            <div class="ntime">الآن</div>
           </div>
         </div>
       </div>
     </div>
+
     <!-- LB -->
-    <div class="tab-content" id="tab-lb">
-      <div class="sec-hdr"><div class="sec-title">🏆 المتصدرون</div><span style="font-size:9px;color:var(--muted)">يتحدث بعد كل مباراة</span></div>
+    <div class="pane" id="pane-lb">
+      <div class="sec-hdr"><div class="sec-t">🏆 المتصدرون</div><span style="font-size:9px;color:var(--text3);font-weight:700">يتحدث بعد كل مباراة</span></div>
       <div class="podium" id="lb-podium"></div>
-      <div class="lb-card"><div class="lb-hdr">📋 الترتيب الكامل</div><div id="lb-list"></div></div>
+      <div class="lb-card"><div class="lb-hdr">📋 الترتيب الكامل</div><div id="lb-full"></div></div>
     </div>
+
     <!-- PROFILE -->
-    <div class="tab-content" id="tab-profile">
-      <div style="text-align:center;padding:16px 0 12px">
-        <div id="prf-av" class="user-av" style="width:60px;height:60px;font-size:22px;margin:0 auto 9px">؟</div>
-        <div style="font-size:15px;font-weight:700" id="prf-name">—</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px" id="prf-email">—</div>
-        <div style="margin-top:8px"><span class="pts-badge" id="prf-pts">🏆 0 نقطة</span></div>
+    <div class="pane" id="pane-profile">
+      <div style="text-align:center;padding:18px 0 13px">
+        <div class="av" id="prf-av" style="width:60px;height:60px;font-size:22px;margin:0 auto 9px">؟</div>
+        <div style="font-size:15px;font-weight:800" id="prf-name">—</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:2px" id="prf-email">—</div>
+        <div style="margin-top:8px"><span class="pts-chip" id="prf-pts">🏆 0 نقطة</span></div>
       </div>
-      <div class="dash-grid">
-        <div class="dash-card"><div class="dash-val" style="color:var(--green)" id="prf-correct">0</div><div class="dash-lbl">توقعات صحيحة</div></div>
-        <div class="dash-card"><div class="dash-val" style="color:var(--gold)" id="prf-total">0</div><div class="dash-lbl">إجمالي التوقعات</div></div>
-        <div class="dash-card"><div class="dash-val" style="color:var(--purple)" id="prf-acc">0%</div><div class="dash-lbl">نسبة الدقة</div></div>
-        <div class="dash-card"><div class="dash-val" style="color:var(--red)" id="prf-rank">#—</div><div class="dash-lbl">المرتبة</div></div>
+      <div class="sgrid">
+        <div class="scard"><div class="sval" style="color:var(--green)" id="prf-correct">0</div><div class="slbl">توقعات صحيحة</div></div>
+        <div class="scard"><div class="sval" style="color:var(--gold)" id="prf-total">0</div><div class="slbl">إجمالي التوقعات</div></div>
+        <div class="scard"><div class="sval" style="color:#a78bfa" id="prf-acc">0%</div><div class="slbl">نسبة الدقة</div></div>
+        <div class="scard"><div class="sval" style="color:var(--red)" id="prf-rank">#—</div><div class="slbl">المرتبة</div></div>
       </div>
       <div class="lb-card">
         <div class="lb-hdr">📜 سجل التوقعات</div>
-        <div id="pred-hist"><div style="padding:14px;text-align:center;color:var(--muted);font-size:10px">لا توجد توقعات بعد</div></div>
+        <div id="pred-hist"><div class="empty"><div class="eico">📝</div><p>لا توجد توقعات بعد</p></div></div>
       </div>
-      <button onclick="doLogout()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:10px;font-size:12px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;margin-top:6px;">تسجيل الخروج</button>
+      <button onclick="doLogout()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:9px;font-size:12px;font-weight:800;font-family:var(--cairo);cursor:pointer;margin-top:6px;">تسجيل الخروج</button>
     </div>
   </div>
-  <div class="bottomnav">
-    <button class="nav-btn active" onclick="switchTab('home',this)"><span class="ni">🏠</span><span class="nl">الرئيسية</span></button>
-    <button class="nav-btn" onclick="switchTab('matches',this)"><span class="ni">⚽</span><span class="nl">المباريات</span></button>
-    <button class="nav-btn" onclick="switchTab('groups',this)"><span class="ni">📊</span><span class="nl">المجموعات</span></button>
-    <button class="nav-btn" onclick="switchTab('notifs',this)"><span class="ni">🔔</span><span class="nl">إشعارات</span></button>
-    <button class="nav-btn" onclick="switchTab('lb',this)"><span class="ni">🏆</span><span class="nl">المتصدرون</span></button>
+
+  <div class="bnav">
+    <button class="nbtn active" onclick="switchTab('home',this)"><span class="ni">🏠</span><span class="nl">الرئيسية</span></button>
+    <button class="nbtn" onclick="switchTab('matches',this)"><span class="ni">⚽</span><span class="nl">المباريات</span></button>
+    <button class="nbtn" onclick="switchTab('groups',this)"><span class="ni">📊</span><span class="nl">المجموعات</span></button>
+    <button class="nbtn" onclick="switchTab('notifs',this)"><span class="ni">🔔</span><span class="nl">إشعارات</span></button>
+    <button class="nbtn" onclick="switchTab('lb',this)"><span class="ni">🏆</span><span class="nl">المتصدرون</span></button>
   </div>
 </div>
 
-<!-- ========== ADMIN ========== -->
+<!-- ADMIN -->
 <div id="admin-screen" class="screen">
-  <div class="admin-topnav">
-    <div class="admin-title">🔐 لوحة الإدارة — GoalPredict</div>
-    <div style="display:flex;gap:8px;">
-      <button onclick="showAdminTab('users')" class="btn-sm-gold" id="atab-users">👥 المستخدمون</button>
-      <button onclick="showAdminTab('results')" class="btn-sm-gold" id="atab-results">⚽ النتائج</button>
-      <button onclick="exitAdmin()" class="btn-sm-red">← خروج</button>
+  <div class="admin-nav">
+    <div class="admin-brand">🔐 GOALPREDICT ADMIN</div>
+    <div style="display:flex;gap:6px" id="admin-btns" style="display:none">
+      <button class="bxs bxs-gold" onclick="showPanel('users')">👥 المستخدمون</button>
+      <button class="bxs bxs-blue" onclick="showPanel('results')">⚽ النتائج</button>
+      <button class="bxs bxs-blue" onclick="showPanel('manual-preds')">✍️ توقعات يدوية</button>
+      <button class="bxs bxs-red" onclick="exitAdmin()">← خروج</button>
     </div>
+    <button class="bxs bxs-red" id="exit-btn" onclick="exitAdmin()" style="display:none">← خروج</button>
   </div>
   <div class="admin-content">
+
     <!-- ADMIN LOGIN -->
-    <div id="admin-login-panel" style="max-width:360px;margin:40px auto;">
-      <div class="admin-card">
-        <h3>🔐 دخول الإدارة</h3>
-        <div class="fg"><label>كلمة مرور الإدارة</label><input type="password" id="admin-pass" placeholder="••••••••" onkeypress="if(event.key==='Enter')checkAdmin()"></div>
-        <button class="btn-gold" onclick="checkAdmin()">دخول</button>
+    <div id="admin-login" class="admin-login-wrap">
+      <div class="asec">
+        <div class="asec-hdr">🔐 دخول الإدارة</div>
+        <div style="padding:14px">
+          <div class="fg"><label>كلمة المرور</label><input type="password" id="apwd" placeholder="••••••••" onkeypress="if(event.key==='Enter')checkAdmin()"></div>
+          <button class="btn-gold" onclick="checkAdmin()">دخول</button>
+        </div>
       </div>
     </div>
-    <!-- ADMIN PANELS -->
-    <div id="admin-panels" style="display:none">
-      <!-- STATS -->
-      <div class="admin-stat-row">
-        <div class="admin-stat"><div class="stat-num" id="a-total-users">0</div><div class="stat-lbl">مستخدم مسجّل</div></div>
-        <div class="admin-stat"><div class="stat-num" id="a-total-preds">0</div><div class="stat-lbl">توقع مُسجَّل</div></div>
-        <div class="admin-stat"><div class="stat-num" id="a-active">0</div><div class="stat-lbl">نشط هذا الأسبوع</div></div>
+
+    <!-- ADMIN MAIN -->
+    <div id="admin-main" style="display:none">
+      <div class="astats">
+        <div class="astat"><div class="astat-val" id="a-users">0</div><div class="astat-lbl">مستخدم</div></div>
+        <div class="astat"><div class="astat-val" id="a-preds">0</div><div class="astat-lbl">توقع</div></div>
+        <div class="astat"><div class="astat-val" id="a-pts">0</div><div class="astat-lbl">إجمالي النقاط</div></div>
       </div>
+
       <!-- USERS -->
-      <div id="admin-users-panel">
-        <div class="admin-card admin-full">
-          <h3>👥 إدارة المستخدمين</h3>
-          <div style="margin-bottom:10px;display:flex;gap:7px;">
-            <input type="text" id="user-search" placeholder="ابحث باسم أو بريد..." style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'Cairo',sans-serif;font-size:11px;outline:none;" oninput="renderAdminUsers()">
-            <button class="btn-sm-red" onclick="clearAllUsers()">🗑 حذف الكل</button>
-          </div>
-          <div style="overflow-x:auto;">
-            <table class="admin-table" id="users-table">
-              <thead><tr>
-                <th>#</th><th>الاسم</th><th>البريد</th><th>النقاط</th><th>التوقعات</th><th>الصحيحة</th><th>الدقة</th><th>إجراءات</th>
-              </tr></thead>
-              <tbody id="users-tbody"></tbody>
+      <div id="panel-users" class="asec">
+        <div class="asec-hdr">👥 إدارة المستخدمين
+          <button class="bxs bxs-red" style="margin-right:auto" onclick="clearAll()">🗑 حذف الكل</button>
+        </div>
+        <div style="padding:11px 13px">
+          <input class="asearch" id="usearch" placeholder="ابحث باسم أو بريد..." oninput="renderUsers()">
+          <div style="overflow-x:auto">
+            <table class="atbl">
+              <thead><tr><th>#</th><th>الاسم</th><th>البريد</th><th>النقاط</th><th>التوقعات</th><th>الدقة</th><th>إجراءات</th></tr></thead>
+              <tbody id="utbody"></tbody>
             </table>
           </div>
         </div>
       </div>
+
       <!-- RESULTS -->
-      <div id="admin-results-panel" style="display:none">
-        <div class="admin-card admin-full">
-          <h3>⚽ إدخال نتائج المباريات السابقة</h3>
-          <p style="font-size:10px;color:var(--muted);margin-bottom:12px">أدخل النتائج الحقيقية لكل مباراة — سيتم احتساب نقاط جميع المستخدمين تلقائياً</p>
-          <div id="results-list"><div class="loading"><div class="spinner"></div><br>جاري تحميل المباريات...</div></div>
+      <div id="panel-results" class="asec" style="display:none">
+        <div class="asec-hdr">⚽ إدخال نتائج المباريات
+          <span style="font-size:9px;color:var(--text2);margin-right:auto">يوزّع النقاط تلقائياً على جميع المستخدمين</span>
+        </div>
+        <div style="padding:11px 13px">
+          <div id="results-list"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- MANUAL PREDICTIONS -->
+      <div id="panel-manual-preds" class="asec" style="display:none">
+        <div class="asec-hdr">✍️ إدخال توقعات يدوية للمستخدمين</div>
+        <div style="padding:11px 13px">
+          <p style="font-size:10px;color:var(--text2);margin-bottom:11px;line-height:1.6;font-weight:600">
+            أدخل توقعات المستخدمين للمباريات المنتهية يدوياً — ستُحتسب النقاط تلقائياً بناءً على النتيجة الحقيقية
+          </p>
+          <div class="user-select-row">
+            <select id="mpred-user-select" onchange="loadManualPredMatches()">
+              <option value="">اختر مستخدماً...</option>
+            </select>
+            <button class="bxs bxs-gold" onclick="saveAllManualPreds()">💾 حفظ الكل</button>
+          </div>
+          <div id="mpred-matches"><div class="empty"><div class="eico">👆</div><p>اختر مستخدماً أولاً</p></div></div>
         </div>
       </div>
     </div>
@@ -437,12 +553,12 @@ body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-h
 </div>
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal">
+<div class="modal-ov" id="modal">
   <div class="modal">
     <div class="modal-emoji" id="m-emoji">🎉</div>
-    <h3 id="m-title">توقع صحيح!</h3>
-    <div class="modal-pts" id="m-pts">+3</div>
-    <p id="m-desc">أحسنت!</p>
+    <div class="modal-title" id="m-title">توقع مسجّل!</div>
+    <div class="modal-pts" id="m-pts">+3?</div>
+    <div class="modal-desc" id="m-desc">تم تسجيل توقعك.</div>
     <button class="modal-close" onclick="closeModal()">رائع 🙌</button>
   </div>
 </div>
@@ -450,45 +566,52 @@ body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-h
 
 <script>
 const API = 'https://goalpredict-backend.vercel.app';
-const ADMIN_PWD = 'admin2026'; // غيّرها لكلمة مرور قوية
+const ADMIN_PWD = 'admin2026';
+const COLORS = ['#FFD700,#e8a000','#f472b6,#ec4899','#3b82f6,#1d4ed8','#10b981,#059669','#e74c3c,#c0392b','#a78bfa,#7c3aed','#f97316,#ea580c','#06b6d4,#0284c7','#84cc16,#65a30d','#f43f5e,#be123c'];
 
-// ====== STATE ======
-let currentUser = null;
-let userPts = 0, correctPreds = 0, totalPreds = 0;
-const preds = {}; // matchId -> {wdl, s1, s2, confirmed, pts}
-const predHistory = [];
-
-// LEADERBOARD — فارغ بدون بيانات تجريبية
-let leaderboard = [];
-
+// أعلام الدول — قائمة شاملة
 const FLAGS = {
   'Mexico':'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czech Republic':'🇨🇿','Czechia':'🇨🇿',
-  'Canada':'🇨🇦','Bosnia and Herzegovina':'🇧🇦','USA':'🇺🇸','United States':'🇺🇸','Paraguay':'🇵🇾',
-  'Qatar':'🇶🇦','Switzerland':'🇨🇭','Brazil':'🇧🇷','Morocco':'🇲🇦','Haiti':'🇭🇹',
-  'Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','Australia':'🇦🇺','Turkey':'🇹🇷','Turkiye':'🇹🇷','Germany':'🇩🇪',
-  'Curacao':'🇳🇱','Curaçao':'🇳🇱','Netherlands':'🇳🇱','Japan':'🇯🇵','Ivory Coast':'🇨🇮',
-  "Cote d'Ivoire":'🇨🇮','Ecuador':'🇪🇨','Sweden':'🇸🇪','Tunisia':'🇹🇳','Spain':'🇪🇸',
-  'Cape Verde':'🇨🇻','Cabo Verde':'🇨🇻','Belgium':'🇧🇪','Egypt':'🇪🇬',
+  'Canada':'🇨🇦','Bosnia and Herzegovina':'🇧🇦','Bosnia':'🇧🇦','USA':'🇺🇸','United States':'🇺🇸',
+  'Paraguay':'🇵🇾','Qatar':'🇶🇦','Switzerland':'🇨🇭','Brazil':'🇧🇷','Morocco':'🇲🇦',
+  'Haiti':'🇭🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','Australia':'🇦🇺','Turkey':'🇹🇷','Turkiye':'🇹🇷',
+  'Germany':'🇩🇪','Curacao':'🇨🇼','Curaçao':'🇨🇼','Netherlands':'🇳🇱','Japan':'🇯🇵',
+  'Ivory Coast':'🇨🇮',"Cote d'Ivoire":'🇨🇮','Ecuador':'🇪🇨','Sweden':'🇸🇪','Tunisia':'🇹🇳',
+  'Spain':'🇪🇸','Cape Verde':'🇨🇻','Cabo Verde':'🇨🇻','Belgium':'🇧🇪','Egypt':'🇪🇬',
   'Saudi Arabia':'🇸🇦','Uruguay':'🇺🇾','Iran':'🇮🇷','New Zealand':'🇳🇿','France':'🇫🇷',
   'Senegal':'🇸🇳','Norway':'🇳🇴','Iraq':'🇮🇶','Argentina':'🇦🇷','Algeria':'🇩🇿',
-  'Austria':'🇦🇹','Jordan':'🇯🇴','Portugal':'🇵🇹','DR Congo':'🇨🇩','Uzbekistan':'🇺🇿',
-  'Colombia':'🇨🇴','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croatia':'🇭🇷','Ghana':'🇬🇭','Serbia':'🇷🇸',
-  'Poland':'🇵🇱','Ukraine':'🇺🇦','Indonesia':'🇮🇩','Panama':'🇵🇦','Honduras':'🇭🇳',
+  'Austria':'🇦🇹','Jordan':'🇯🇴','Portugal':'🇵🇹','DR Congo':'🇨🇩','Congo DR':'🇨🇩',
+  'Democratic Republic of Congo':'🇨🇩','Uzbekistan':'🇺🇿','Colombia':'🇨🇴',
+  'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croatia':'🇭🇷','Ghana':'🇬🇭','Serbia':'🇷🇸','Poland':'🇵🇱',
+  'Ukraine':'🇺🇦','Indonesia':'🇮🇩','Panama':'🇵🇦','Honduras':'🇭🇳',
   'Jamaica':'🇯🇲','Venezuela':'🇻🇪','Chile':'🇨🇱','Peru':'🇵🇪',
+  'Costa Rica':'🇨🇷','Guatemala':'🇬🇹','El Salvador':'🇸🇻',
+  'Trinidad and Tobago':'🇹🇹','Cuba':'🇨🇺','Nicaragua':'🇳🇮',
+  'Bolivia':'🇧🇴','Paraguay':'🇵🇾','Ecuador':'🇪🇨',
+  'Nigeria':'🇳🇬','Cameroon':'🇨🇲','Ivory Coast':'🇨🇮','Ghana':'🇬🇭',
+  'Mali':'🇲🇱','Guinea':'🇬🇳','Tanzania':'🇹🇿','Zambia':'🇿🇲',
+  'Angola':'🇦🇴','Mozambique':'🇲🇿','Zimbabwe':'🇿🇼',
+  'South Korea':'🇰🇷','China':'🇨🇳','India':'🇮🇳','Thailand':'🇹🇭',
+  'Vietnam':'🇻🇳','Philippines':'🇵🇭','Malaysia':'🇲🇾',
+  'Romania':'🇷🇴','Hungary':'🇭🇺','Slovakia':'🇸🇰','Czechia':'🇨🇿',
+  'Denmark':'🇩🇰','Finland':'🇫🇮','Greece':'🇬🇷','Georgia':'🇬🇪',
 };
-const flag = n => FLAGS[n] || '🏳️';
+const flag = n => FLAGS[n] || (n ? n.charAt(0) : '🏳️');
 
-const COLORS = ['#FFD700,#e8a000','#f472b6,#ec4899','#4a90e2,#0066cc','#10b981,#059669',
-  '#e74c3c,#c0392b','#a78bfa,#7c3aed','#f97316,#ea580c','#06b6d4,#0284c7'];
+// STATE
+let currentUser=null, userPts=0, correctPreds=0, totalPreds=0;
+const preds={};
+const predHistory=[];
+let leaderboard=[];
+let allMatches=[];
 
-// ====== AUTH ======
+// ===== AUTH =====
 function authTab(tab,btn){
-  document.querySelectorAll('.auth-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
-  document.getElementById('reg-form').style.display=tab==='register'?'block':'none';
+  document.getElementById('frm-login').style.display=tab==='login'?'block':'none';
+  document.getElementById('frm-reg').style.display=tab==='register'?'block':'none';
 }
-
 async function doLogin(){
   const email=document.getElementById('l-email').value.trim();
   const pass=document.getElementById('l-pass').value;
@@ -497,17 +620,14 @@ async function doLogin(){
     const r=await fetch(`${API}/api/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const d=await r.json();
     if(!r.ok){toast(d.error||'خطأ','err');return;}
-    enterApp(d);
+    saveUserLocal({...d,password:pass}); enterApp(d);
   }catch{
-    // وضع تجريبي بدون سيرفر
-    const saved=JSON.parse(localStorage.getItem('gp_users')||'{}');
-    const u=saved[email];
+    const users=getUsers();const u=users[email];
     if(!u){toast('البريد غير مسجّل','err');return;}
     if(u.password!==pass){toast('كلمة المرور خاطئة','err');return;}
-    enterApp({...u,offline:true});
+    enterApp(u);
   }
 }
-
 async function doRegister(){
   const name=document.getElementById('r-name').value.trim();
   const email=document.getElementById('r-email').value.trim();
@@ -517,295 +637,321 @@ async function doRegister(){
     const r=await fetch(`${API}/api/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass})});
     const d=await r.json();
     if(!r.ok){toast(d.error||'خطأ','err');return;}
-    // حفظ محلي أيضاً
-    saveUserLocal(d.userId,name,email,pass);
-    enterApp(d);
-    toast(`🎉 أهلاً ${name}!`);
+    saveUserLocal({...d,password:pass}); enterApp(d); toast(`🎉 أهلاً ${name}!`);
   }catch{
-    // حفظ محلي فقط
-    const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
+    const users=getUsers();
     if(users[email]){toast('البريد مسجّل مسبقاً','err');return;}
     const userId='u_'+Date.now();
-    const u={userId,name,email,password:pass,points:0,correct:0,total:0,color:COLORS[Object.keys(users).length%COLORS.length]};
-    users[email]=u;
-    localStorage.setItem('gp_users',JSON.stringify(users));
-    enterApp({...u,offline:true});
-    toast(`🎉 أهلاً ${name}! (وضع محلي)`);
+    const color=COLORS[Object.keys(users).length%COLORS.length];
+    const u={userId,name,email,password:pass,points:0,correct:0,total:0,color};
+    users[email]=u; setUsers(users); enterApp(u); toast(`🎉 أهلاً ${name}!`);
   }
 }
-
-function saveUserLocal(userId,name,email,pass){
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  if(!users[email]){
-    users[email]={userId,name,email,password:pass,points:0,correct:0,total:0,color:COLORS[Object.keys(users).length%COLORS.length]};
-    localStorage.setItem('gp_users',JSON.stringify(users));
-  }
-}
-
 function enterApp(u){
-  currentUser=u; userPts=u.points||0; correctPreds=u.correct||0; totalPreds=u.total||0;
+  currentUser=u;
+  const stats=JSON.parse(localStorage.getItem(`gp_stats_${u.userId}`)||'null');
+  if(stats){userPts=stats.pts;correctPreds=stats.correct;totalPreds=stats.total;}
+  else{userPts=u.points||0;correctPreds=u.correct||0;totalPreds=u.total||0;}
   document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('main-screen').classList.add('active');
-  const init=u.name.charAt(0);
+  const init=u.name.charAt(0).toUpperCase();
   document.getElementById('user-av').textContent=init;
   document.getElementById('prf-av').textContent=init;
   document.getElementById('prf-name').textContent=u.name;
   document.getElementById('prf-email').textContent=u.email;
-  // تحميل بيانات المستخدم المحفوظة
-  loadUserPreds();
-  buildLeaderboard();
-  checkAPI();
-  loadMatches();
-  loadGroups();
-  updateDash();
+  const sp=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
+  Object.assign(preds,sp);
+  const sh=JSON.parse(localStorage.getItem(`gp_hist_${u.userId}`)||'[]');
+  predHistory.push(...sh);
+  renderPredHist();
+  buildLB(); checkAPI(); loadMatches(); loadGroups(); updateDash();
   setInterval(loadMatches,60000);
 }
-
 function doLogout(){
-  currentUser=null;
+  currentUser=null;userPts=0;correctPreds=0;totalPreds=0;
+  predHistory.length=0;Object.keys(preds).forEach(k=>delete preds[k]);
   document.getElementById('main-screen').classList.remove('active');
   document.getElementById('auth-screen').classList.add('active');
   toast('👋 تم تسجيل الخروج');
 }
 
-// ====== LOCAL STORAGE ======
-function loadUserPreds(){
-  if(!currentUser) return;
-  const saved=JSON.parse(localStorage.getItem(`gp_preds_${currentUser.userId}`)||'{}');
-  Object.assign(preds,saved);
-  const hist=JSON.parse(localStorage.getItem(`gp_hist_${currentUser.userId}`)||'[]');
-  predHistory.length=0; predHistory.push(...hist);
-  renderPredHist();
-  // استعادة نقاط محفوظة
-  const pts=JSON.parse(localStorage.getItem(`gp_stats_${currentUser.userId}`)||'null');
-  if(pts){userPts=pts.pts;correctPreds=pts.correct;totalPreds=pts.total;}
+// ===== STORAGE =====
+const getUsers=()=>JSON.parse(localStorage.getItem('gp_users')||'{}');
+const setUsers=u=>localStorage.setItem('gp_users',JSON.stringify(u));
+function saveUserLocal(u){
+  const users=getUsers();
+  if(!users[u.email]){
+    users[u.email]={...u,color:COLORS[Object.keys(users).length%COLORS.length],points:0,correct:0,total:0};
+    setUsers(users);
+  }
 }
-
-function saveUserPreds(){
-  if(!currentUser) return;
+function savePreds(){
+  if(!currentUser)return;
   localStorage.setItem(`gp_preds_${currentUser.userId}`,JSON.stringify(preds));
   localStorage.setItem(`gp_hist_${currentUser.userId}`,JSON.stringify(predHistory));
   localStorage.setItem(`gp_stats_${currentUser.userId}`,JSON.stringify({pts:userPts,correct:correctPreds,total:totalPreds}));
-  // تحديث بيانات المستخدم
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
+  const users=getUsers();
   if(users[currentUser.email]){
     users[currentUser.email].points=userPts;
     users[currentUser.email].correct=correctPreds;
     users[currentUser.email].total=totalPreds;
-    localStorage.setItem('gp_users',JSON.stringify(users));
+    setUsers(users);
   }
 }
 
-function buildLeaderboard(){
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  leaderboard=Object.values(users).map(u=>({
-    name:u.name,pts:u.points||0,correct:u.correct||0,total:u.total||0,
-    av:u.name.charAt(0),color:u.color||COLORS[0],isMe:u.email===currentUser?.email
-  }));
-  // أضف المستخدم الحالي لو مش موجود
-  if(!leaderboard.find(x=>x.isMe)&&currentUser){
-    leaderboard.push({name:currentUser.name,pts:userPts,correct:correctPreds,total:totalPreds,
-      av:currentUser.name.charAt(0),color:COLORS[leaderboard.length%COLORS.length],isMe:true});
-  }
-  renderLB();
-}
-
-// ====== TABS ======
+// ===== TABS =====
 function switchTab(tab,btn){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn,.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tbtn,.nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pane-'+tab).classList.add('active');
   btn.classList.add('active');
-  const tabMap={home:0,matches:1,groups:2,notifs:3,lb:4,profile:5};
-  const navMap={home:0,matches:1,groups:2,notifs:3,lb:4};
-  if(tabMap[tab]!==undefined) document.querySelectorAll('.tab-btn')[tabMap[tab]].classList.add('active');
-  if(navMap[tab]!==undefined) document.querySelectorAll('.nav-btn')[navMap[tab]].classList.add('active');
-  if(tab==='notifs') document.querySelectorAll('.notif-dot').forEach(d=>d.remove());
+  const tm={home:0,matches:1,groups:2,notifs:3,lb:4,profile:5};
+  const nm={home:0,matches:1,groups:2,notifs:3,lb:4};
+  if(tm[tab]!==undefined)document.querySelectorAll('.tbtn')[tm[tab]].classList.add('active');
+  if(nm[tab]!==undefined)document.querySelectorAll('.nbtn')[nm[tab]].classList.add('active');
+  if(tab==='notifs')document.querySelectorAll('.ndot').forEach(d=>d.remove());
 }
 
-// ====== API ======
+// ===== API =====
 async function checkAPI(){
   try{
-    const r=await fetch(`${API}/`);
-    const d=await r.json();
-    setApiStatus('ok',`✅ متصل — اليوم: ${d.todayMecca} (مكة)`);
-  }catch{
-    setApiStatus('err','⚠️ السيرفر غير متاح — بيانات محلية فقط');
-  }
+    const r=await fetch(`${API}/`);const d=await r.json();
+    setApi('ok',`✅ متصل — اليوم ${d.todayMecca} (مكة)`);
+  }catch{setApi('err','⚠️ السيرفر غير متاح');}
 }
-function setApiStatus(state,msg){
-  document.getElementById('api-dot').className='api-dot '+state;
+function setApi(s,msg){
+  document.getElementById('api-dot').className='sdot d'+s;
   document.getElementById('api-msg').textContent=msg;
 }
 
-// ====== MATCHES ======
+// ===== MATCHES =====
 async function loadMatches(){
   const el=document.getElementById('matches-list');
   try{
     const r=await fetch(`${API}/api/fixtures/all`);
-    const matches=await r.json();
-    if(!Array.isArray(matches)||!matches.length){
-      el.innerHTML='<div class="loading">لا توجد مباريات</div>'; return;
+    const data=await r.json();
+    if(!Array.isArray(data)||!data.length){
+      el.innerHTML='<div class="empty"><div class="eico">📅</div><p>لا توجد مباريات</p></div>';return;
     }
-    renderMatches(matches,el);
-    setApiStatus('ok','✅ بيانات حية من كأس العالم 2026');
+    allMatches=data;
+    renderMatches(data,el);
+    setApi('ok',`✅ متصل — ${data.length} مباراة`);
   }catch{
-    el.innerHTML='<div class="loading">❌ تعذر التحميل — تأكد أن السيرفر يعمل (npm start)</div>';
-    setApiStatus('err','⚠️ السيرفر غير متاح');
+    el.innerHTML='<div class="empty"><div class="eico">❌</div><p>تعذر التحميل</p></div>';
+    setApi('err','⚠️ تعذر الاتصال');
   }
 }
 
-function renderMatches(matches,el){
-  const live=matches.filter(m=>m.live);
-  const upcoming=matches.filter(m=>!m.live&&!m.finished);
-  const finished=matches.filter(m=>m.finished);
+function renderMatches(all,el){
+  // ترتيب: منتهية أولاً ← ثم جارية ← ثم قادمة
+  const finished=all.filter(m=>m.finished).sort((a,b)=>a.localDate?.localeCompare(b.localDate||'')||0);
+  const live=all.filter(m=>m.live);
+  const upcoming=all.filter(m=>!m.live&&!m.finished).sort((a,b)=>a.localDate?.localeCompare(b.localDate||'')||0);
+
   let html='';
+  if(finished.length){
+    html+=`<div class="sec-hdr"><div class="sec-t">✅ مباريات انتهت</div></div>`;
+    finished.forEach(m=>html+=matchCard(m));
+  }
   if(live.length){
-    html+=`<div class="sec-hdr"><div class="sec-title"><div class="live-dot"></div> جارية الآن</div></div>`;
-    live.forEach(m=>{html+=matchCard(m);});
+    html+=`<div class="sec-hdr" style="margin-top:${finished.length?13:0}px"><div class="sec-t"><span class="live-badge">LIVE</span> جارية الآن</div></div>`;
+    live.forEach(m=>html+=matchCard(m));
   }
   if(upcoming.length){
-    html+=`<div class="sec-hdr" style="margin-top:${live.length?12:0}px"><div class="sec-title">⚡ قادمة</div></div>`;
-    upcoming.slice(0,15).forEach(m=>{html+=matchCard(m);});
+    html+=`<div class="sec-hdr" style="margin-top:${(finished.length||live.length)?13:0}px"><div class="sec-t">⚡ قادمة</div></div>`;
+    upcoming.forEach(m=>html+=matchCard(m));
   }
-  if(finished.length){
-    html+=`<div class="sec-hdr" style="margin-top:12px"><div class="sec-title">✅ انتهت</div></div>`;
-    finished.slice(0,20).forEach(m=>{html+=matchCard(m);});
-  }
-  el.innerHTML=html||'<div class="loading">لا توجد مباريات</div>';
+  el.innerHTML=html||'<div class="empty"><div class="eico">📅</div><p>لا توجد مباريات</p></div>';
 }
 
 function matchCard(m){
-  const pred=preds[m.id];
-  const locked=pred?.confirmed;
+  const pred=preds[m.id];const locked=pred?.confirmed;
+  const h=m.home,a=m.away;
   const stCls=m.live?'st-live':m.finished?'st-ft':'st-ns';
-  const h=m.home, a=m.away;
+  const hf=flag(h.name),af=flag(a.name);
 
   let scoreHTML='';
-  if(m.score.home!==null&&m.finished){
-    scoreHTML=`<div class="score-num">${m.score.home}–${m.score.away}</div>`;
-  } else if(m.live&&m.score.home!==null){
-    scoreHTML=`<div class="score-num" style="color:var(--red)">${m.score.home}–${m.score.away}</div>`;
-  } else {
-    scoreHTML=`<div class="score-vs">VS</div><div class="match-time-disp">${m.meccaTime} مكة</div>`;
+  if(m.finished&&m.score.home!==null){
+    scoreHTML=`<div class="snum">${m.score.home}–${m.score.away}</div>`;
+  }else if(m.live&&m.score.home!==null){
+    scoreHTML=`<div class="snum" style="color:var(--red)">${m.score.home}–${m.score.away}</div>`;
+  }else{
+    scoreHTML=`<div class="svs">VS</div><div class="stime">${m.meccaTime} مكة</div>`;
   }
 
   let predHTML='';
   if(!m.finished){
-    predHTML=`<div class="predict-zone">
-      <div class="predict-lbl">${locked?'✅ توقعك مسجّل':'📊 توقع الفائز واحصل على نقاط'}</div>
-      <div class="predict-btns">
-        <button class="pbtn${locked?(pred.wdl==='home'?' sel-h':' wrong'):''}" onclick="selWDL(this,'home','${m.id}')" ${locked?'disabled':''}>🏠 ${h.nameAr}</button>
-        <button class="pbtn${locked?(pred.wdl==='draw'?' sel-d':' wrong'):''}" onclick="selWDL(this,'draw','${m.id}')" ${locked?'disabled':''}>🤝 تعادل</button>
-        <button class="pbtn${locked?(pred.wdl==='away'?' sel-a':' wrong'):''}" onclick="selWDL(this,'away','${m.id}')" ${locked?'disabled':''}>✈️ ${a.nameAr}</button>
+    const hc=locked?(pred.wdl==='home'?' sh':' wrong'):'';
+    const dc=locked?(pred.wdl==='draw'?' sd':' wrong'):'';
+    const ac=locked?(pred.wdl==='away'?' sa':' wrong'):'';
+    const dis=locked?'disabled':'';
+    predHTML=`<div class="pzone">
+      <div class="plbl">${locked?'✅ توقعك مسجّل':'📊 توقع الفائز'}</div>
+      <div class="pbtns">
+        <button class="pbtn${hc}" onclick="selWDL(this,'home','${m.id}')" ${dis}>🏠 ${h.nameAr}</button>
+        <button class="pbtn${dc}" onclick="selWDL(this,'draw','${m.id}')" ${dis}>🤝 تعادل</button>
+        <button class="pbtn${ac}" onclick="selWDL(this,'away','${m.id}')" ${dis}>✈️ ${a.nameAr}</button>
       </div>
-      ${!locked?`<div class="score-row">
-        <div class="score-lbl">${h.nameAr}</div>
-        <input class="score-inp" type="number" min="0" max="20" placeholder="0" id="s1-${m.id}">
-        <div class="score-sep">–</div>
-        <input class="score-inp" type="number" min="0" max="20" placeholder="0" id="s2-${m.id}">
-        <div class="score-lbl">${a.nameAr}</div>
-      </div>
-      <button class="confirm-btn" onclick="confirmPred('${m.id}','${h.nameAr}','${a.nameAr}')">تأكيد التوقع ← +3 نقاط | +5 للنتيجة الدقيقة</button>`
-      :`<div class="pred-done">✅ ${pred.wdlLabel} | ${pred.s1}–${pred.s2} | +${pred.pts} نقاط</div>`}
+      ${!locked?`<div class="exact">
+        <div class="exact-lbl">🎯 توقع النتيجة الدقيقة ← +5 نقاط إضافية</div>
+        <div class="sinps">
+          <div class="sinp-w"><span>${h.nameAr}</span><input class="sinp" type="number" min="0" max="20" placeholder="0" id="s1-${m.id}"></div>
+          <div class="ssep">–</div>
+          <div class="sinp-w"><span>${a.nameAr}</span><input class="sinp" type="number" min="0" max="20" placeholder="0" id="s2-${m.id}"></div>
+        </div>
+        <button class="cfbtn" onclick="confirmPred('${m.id}','${h.nameAr}','${a.nameAr}')">تأكيد التوقع ← +3 فائز | +5 نتيجة دقيقة</button>
+      </div>`:`<div class="psaved">✅ ${pred.wdlLabel} | ${pred.s1}–${pred.s2} | +${pred.pts} نقاط محتملة</div>`}
     </div>`;
-  } else if(m.finished&&pred){
-    const rH=m.score.home, rA=m.score.away;
-    const correct=(pred.wdl==='home'&&rH>rA)||(pred.wdl==='draw'&&rH===rA)||(pred.wdl==='away'&&rH<rA);
-    const exactBonus=pred.s1===rH&&pred.s2===rA?'+5 🎯':'';
-    predHTML=`<div class="predict-zone"><div class="pred-done" style="color:${correct?'var(--green)':'var(--muted)'}">
-      ${correct?`✅ توقعك صحيح! +${pred.pts} نقاط ${exactBonus}`:'❌ توقعك خاطئ'} — ${pred.wdlLabel} | ${pred.s1}–${pred.s2}
+  }else if(m.finished&&pred){
+    const rH=m.score.home,rA=m.score.away;
+    const wok=(pred.wdl==='home'&&rH>rA)||(pred.wdl==='draw'&&rH===rA)||(pred.wdl==='away'&&rH<rA);
+    const eok=pred.s1===rH&&pred.s2===rA;
+    predHTML=`<div class="pzone"><div class="psaved" style="color:${wok?'var(--green)':'var(--text2)'}">
+      ${wok?`✅ صحيح! +${pred.pts} نقاط${eok?' 🎯 نتيجة دقيقة!':''}`:' ❌ توقعك لم يكن دقيقاً'} — ${pred.wdlLabel} | ${pred.s1}–${pred.s2}
     </div></div>`;
   }
 
-  return `<div class="match-card">
-    <div class="match-meta">
-      <span class="match-group">🏆 ${m.group} · ج${m.matchday}</span>
-      <span class="match-st ${stCls}">${m.statusAr}</span>
+  return `<div class="mcard">
+    <div class="mcard-top">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="wc-tag">WC 2026</span>
+        <span class="mgroup">${m.group} · ج${m.matchday}</span>
+      </div>
+      <span class="mst ${stCls}">${m.statusAr}</span>
     </div>
-    <div class="match-teams">
-      <div class="team"><span class="team-flag">${flag(h.name)}</span><div class="team-name">${h.nameAr}</div></div>
-      <div class="score-box">${scoreHTML}</div>
-      <div class="team"><span class="team-flag">${flag(a.name)}</span><div class="team-name">${a.nameAr}</div></div>
+    <div class="mbody">
+      <div class="mteams">
+        <div class="team"><span class="tflag">${hf}</span><div class="tname">${h.nameAr}</div></div>
+        <div class="sbox">${scoreHTML}</div>
+        <div class="team"><span class="tflag">${af}</span><div class="tname">${a.nameAr}</div></div>
+      </div>
+      ${predHTML}
     </div>
-    ${predHTML}
   </div>`;
 }
 
-// ====== PREDICT ======
+// ===== PREDICT =====
 function selWDL(btn,choice,matchId){
-  if(preds[matchId]?.confirmed) return;
-  btn.closest('.predict-btns').querySelectorAll('.pbtn').forEach(b=>b.classList.remove('sel-h','sel-d','sel-a'));
-  btn.classList.add(choice==='home'?'sel-h':choice==='draw'?'sel-d':'sel-a');
-  if(!preds[matchId]) preds[matchId]={};
+  if(preds[matchId]?.confirmed)return;
+  btn.closest('.pbtns').querySelectorAll('.pbtn').forEach(b=>b.classList.remove('sh','sd','sa'));
+  btn.classList.add(choice==='home'?'sh':choice==='draw'?'sd':'sa');
+  if(!preds[matchId])preds[matchId]={};
   preds[matchId].wdl=choice;
   preds[matchId].wdlLabel=btn.textContent.trim();
 }
-
 function confirmPred(matchId,home,away){
   if(!preds[matchId]?.wdl){toast('⚠️ اختر الفائز أولاً','err');return;}
   if(preds[matchId]?.confirmed){toast('✅ تم تسجيل توقعك مسبقاً');return;}
   const s1v=document.getElementById('s1-'+matchId)?.value;
   const s2v=document.getElementById('s2-'+matchId)?.value;
-  if(s1v===''||s2v===''||s1v===undefined){toast('⚠️ أدخل النتيجة المتوقعة','err');return;}
+  if(s1v===''||s2v===''||s1v===undefined){toast('⚠️ أدخل النتيجة الدقيقة','err');return;}
   const s1=parseInt(s1v),s2=parseInt(s2v);
-  preds[matchId].s1=s1; preds[matchId].s2=s2; preds[matchId].confirmed=true;
-  const pts=3; // سيتم احتساب النقاط الإضافية عند إدخال النتيجة الفعلية
-  preds[matchId].pts=pts;
+  preds[matchId].s1=s1;preds[matchId].s2=s2;preds[matchId].confirmed=true;preds[matchId].pts=3;
   totalPreds++;
-  leaderboard.find(x=>x.isMe&&(x.pts=userPts,x.correct=correctPreds,x.total=totalPreds));
-  predHistory.unshift({home,away,s1,s2,pts,wdl:preds[matchId].wdlLabel,matchId});
-  saveUserPreds();
-  buildLeaderboard();
-  updateDash();
-  loadMatches();
+  predHistory.unshift({home,away,s1,s2,pts:3,wdl:preds[matchId].wdlLabel,matchId});
+  savePreds();buildLB();updateDash();loadMatches();renderPredHist();
   showModal('📝','توقع مسجّل!','+3?',`توقعت: ${preds[matchId].wdlLabel} | ${s1}–${s2}\nستحصل على نقاطك بعد انتهاء المباراة!`);
-  addNotif('⚽',`توقع: ${home} vs ${away}`,`${preds[matchId].wdlLabel} | ${s1}–${s2}`);
+  addNotif('⚽',`توقع — ${home} vs ${away}`,`${preds[matchId].wdlLabel} | ${s1}–${s2}`);
 }
 
-// ====== GROUPS ======
+// ===== GROUPS =====
 async function loadGroups(){
   const el=document.getElementById('groups-list');
   try{
-    const r=await fetch(`${API}/api/standings`);
-    const groups=await r.json();
-    if(!Array.isArray(groups)||!groups.length){el.innerHTML='<div class="loading">لا توجد بيانات</div>';return;}
-    let html='';
-    groups.forEach(g=>{
-      html+=`<div class="grp-hdr">🏆 ${g.group}</div><div class="grp-tbl">
-        <div class="gt-hdr"><span>الفريق</span><span>ل</span><span>ف</span><span>ت</span><span>خ</span><span>نقاط</span></div>`;
-      (g.teams||[]).forEach((t,i)=>{
-        html+=`<div class="gt-row${i<2?' adv':''}">
-          <div class="gt-team">${flag(t.name)} ${t.nameAr||t.name}${i<2?'<span style="font-size:8px;color:var(--green);margin-right:3px">→32</span>':''}</div>
-          <div class="gt-cell">${t.played||0}</div><div class="gt-cell">${t.win||0}</div>
-          <div class="gt-cell">${t.draw||0}</div><div class="gt-cell">${t.lose||0}</div>
-          <div class="gt-pts">${t.points||0}</div>
-        </div>`;
+    // نجلب بيانات الفرق والمباريات لبناء ترتيب حقيقي
+    const [gamesR,teamsR]=await Promise.all([
+      fetch(`${API}/api/fixtures/all`),
+      fetch(`https://worldcup26.ir/get/teams`)
+    ]);
+    const games=await gamesR.json();
+    let teamsData={};
+    try{const t=await teamsR.json();(t.teams||t||[]).forEach(tm=>{teamsData[tm.id]={name_en:tm.name_en,flag:tm.flag,group:tm.groups||tm.group};});}catch{}
+
+    // بناء الترتيب من نتائج المباريات
+    const groups={};
+    if(Array.isArray(games)){
+      games.filter(m=>m.finished&&m.score.home!==null).forEach(m=>{
+        const grp=m.group?.replace('المجموعة ','').trim()||'?';
+        if(!groups[grp])groups[grp]={};
+        [['home',m.home,m.score.home,m.score.away],['away',m.away,m.score.away,m.score.home]].forEach(([side,team,gf,ga])=>{
+          const k=team.name;
+          if(!groups[grp][k])groups[grp][k]={name:k,nameAr:team.nameAr||k,played:0,w:0,d:0,l:0,gf:0,ga:0,pts:0};
+          const t=groups[grp][k];
+          t.played++;t.gf+=gf;t.ga+=ga;
+          if(gf>ga){t.w++;t.pts+=3;}else if(gf===ga){t.d++;t.pts+=1;}else{t.l++;}
+        });
       });
-      html+='</div>';
-    });
-    el.innerHTML=html;
+    }
+
+    let html='';
+    const grpKeys=Object.keys(groups).sort();
+    if(grpKeys.length){
+      grpKeys.forEach(g=>{
+        const teams=Object.values(groups[g]).sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf);
+        html+=`<div class="glbl">🏆 المجموعة ${g}</div><div class="gtbl">
+          <div class="gthdr"><span>الفريق</span><span>ل</span><span>ف</span><span>ت</span><span>خ</span><span>نقاط</span></div>`;
+        teams.forEach((t,i)=>{
+          const f=flag(t.name);
+          html+=`<div class="gtrow${i<2?' top2':''}">
+            <div class="gtteam">${f} ${t.nameAr||t.name}${i<2?'<span class="gtadv">→32</span>':''}</div>
+            <div class="gtcell">${t.played}</div><div class="gtcell">${t.w}</div>
+            <div class="gtcell">${t.d}</div><div class="gtcell">${t.l}</div>
+            <div class="gtpts">${t.pts}</div>
+          </div>`;
+        });
+        html+='</div>';
+      });
+    }else{
+      // fallback: API standings
+      try{
+        const sr=await fetch(`${API}/api/standings`);const sg=await sr.json();
+        if(Array.isArray(sg)&&sg.length){
+          sg.forEach(g=>{
+            html+=`<div class="glbl">🏆 ${g.group}</div><div class="gtbl">
+              <div class="gthdr"><span>الفريق</span><span>ل</span><span>ف</span><span>ت</span><span>خ</span><span>نقاط</span></div>`;
+            (g.teams||[]).forEach((t,i)=>{
+              const f=flag(t.name);
+              html+=`<div class="gtrow${i<2?' top2':''}">
+                <div class="gtteam">${f} ${t.nameAr||t.name}${i<2?'<span class="gtadv">→32</span>':''}</div>
+                <div class="gtcell">${t.played||0}</div><div class="gtcell">${t.win||0}</div>
+                <div class="gtcell">${t.draw||0}</div><div class="gtcell">${t.lose||0}</div>
+                <div class="gtpts">${t.points||0}</div>
+              </div>`;
+            });
+            html+='</div>';
+          });
+        }
+      }catch{}
+    }
+    el.innerHTML=html||'<div class="empty"><div class="eico">📊</div><p>لا توجد بيانات ترتيب بعد</p></div>';
   }catch{
-    el.innerHTML='<div class="loading">❌ تعذر تحميل الترتيب</div>';
+    el.innerHTML='<div class="empty"><div class="eico">❌</div><p>تعذر تحميل الترتيب</p></div>';
   }
 }
 
-// ====== LEADERBOARD ======
+// ===== LEADERBOARD =====
+function buildLB(){
+  const users=getUsers();
+  leaderboard=Object.values(users).map(u=>({
+    name:u.name,pts:u.points||0,correct:u.correct||0,total:u.total||0,
+    av:u.name.charAt(0).toUpperCase(),color:u.color||COLORS[0],isMe:u.email===currentUser?.email
+  }));
+  if(currentUser&&!leaderboard.find(x=>x.isMe)){
+    leaderboard.push({name:currentUser.name,pts:userPts,correct:correctPreds,total:totalPreds,
+      av:currentUser.name.charAt(0).toUpperCase(),color:COLORS[leaderboard.length%COLORS.length],isMe:true});
+  }
+  renderLB();
+}
 function renderLB(){
   const sorted=[...leaderboard].sort((a,b)=>b.pts-a.pts);
-  const pod=i=>i<sorted.length?`<div class="pod-item p${i===0?1:i===1?2:3}">
-    <div>${i===0?'🥇':i===1?'🥈':'🥉'}</div>
-    <div class="pod-av" style="background:linear-gradient(135deg,${sorted[i].color})">${sorted[i].av}</div>
-    <div class="pod-name">${sorted[i].name}</div>
-    <div class="pod-pts">${sorted[i].pts}</div>
-    <div class="pod-block">${i===0?1:i===1?2:3}</div>
-  </div>`:'';
-  const podHTML=sorted.length>=3?`${pod(1)}${pod(0)}${pod(2)}`:sorted.map((_,i)=>pod(i)).join('');
+  const makePod=(p,cls,crown,num)=>p?`<div class="pod ${cls}"><div>${crown}</div>
+    <div class="pod-av" style="background:linear-gradient(135deg,${p.color})">${p.av}</div>
+    <div class="pod-nm">${p.name}</div><div class="pod-pts">${p.pts}</div>
+    <div class="pod-blk">${num}</div></div>`:'';
+  const pod=sorted.length>=3?makePod(sorted[1],'p2','🥈',2)+makePod(sorted[0],'p1','🥇',1)+makePod(sorted[2],'p3','🥉',3):'';
   ['home-podium','lb-podium'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.innerHTML=podHTML||'<div class="loading" style="font-size:10px">لا يوجد مستخدمون بعد</div>';
+    document.getElementById(id).innerHTML=pod||'<div class="empty" style="padding:12px"><div class="eico" style="font-size:22px">🏆</div><p style="font-size:9px">لا يوجد مستخدمون بعد</p></div>';
   });
-
   let rows='';
   sorted.forEach((p,i)=>{
     const rank=i+1,rm=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
@@ -813,261 +959,317 @@ function renderLB(){
     rows+=`<div class="lb-row${p.isMe?' me':''}">
       <div class="lb-rank">${rm}</div>
       <div class="lb-av" style="background:linear-gradient(135deg,${p.color})">${p.av}</div>
-      <div class="lb-info"><div class="lb-name">${p.name}${p.isMe?' 👈':''}</div><div class="lb-sub">${p.correct}/${p.total} صحيح · ${acc}%</div></div>
+      <div class="lb-info"><div class="lb-nm">${p.name}${p.isMe?' 👈':''}</div><div class="lb-sub">${p.correct}/${p.total} صحيح · ${acc}%</div></div>
       <div class="lb-pts">${p.pts}</div>
     </div>`;
   });
-  const lbList=document.getElementById('lb-list');
-  if(lbList) lbList.innerHTML=rows||'<div style="padding:14px;text-align:center;color:var(--muted);font-size:10px">لا يوجد مستخدمون مسجّلون بعد</div>';
-
-  let mini=`<div class="lb-hdr">🏆 أفضل 5</div>`;
-  sorted.slice(0,5).forEach((p,i)=>{
+  document.getElementById('lb-full').innerHTML=rows||'<div class="empty" style="padding:16px"><div class="eico">👥</div><p>لا يوجد مستخدمون</p></div>';
+  let mini='<div class="lb-hdr">🏆 أفضل 5</div>';
+  if(!sorted.length)mini+='<div class="empty" style="padding:12px"><div class="eico" style="font-size:20px">👥</div><p style="font-size:9px">لا يوجد مستخدمون</p></div>';
+  else sorted.slice(0,5).forEach((p,i)=>{
     const rm=i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
     mini+=`<div class="lb-row${p.isMe?' me':''}">
       <div class="lb-rank">${rm}</div>
       <div class="lb-av" style="background:linear-gradient(135deg,${p.color})">${p.av}</div>
-      <div class="lb-info"><div class="lb-name">${p.name}${p.isMe?' 👈':''}</div><div class="lb-sub">${p.pts} نقطة</div></div>
+      <div class="lb-info"><div class="lb-nm">${p.name}${p.isMe?' 👈':''}</div><div class="lb-sub">${p.pts} نقطة</div></div>
       <div class="lb-pts">${p.pts}</div>
     </div>`;
   });
-  if(!sorted.length) mini+=`<div style="padding:14px;text-align:center;color:var(--muted);font-size:10px">لا يوجد مستخدمون بعد</div>`;
-  const homeLb=document.getElementById('home-lb');
-  if(homeLb) homeLb.innerHTML=mini;
-
+  document.getElementById('home-lb').innerHTML=mini;
   const me=sorted.findIndex(x=>x.isMe);
-  const rankTxt=me>=0?'#'+(me+1):'#—';
-  ['d-rank','prf-rank'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=rankTxt;});
+  const rt=me>=0?'#'+(me+1):'#—';
+  ['d-rank','prf-rank'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=rt;});
 }
 
-// ====== DASHBOARD ======
+// ===== DASHBOARD =====
 function updateDash(){
   const acc=totalPreds>0?Math.round(correctPreds/totalPreds*100):0;
-  document.getElementById('d-pts').textContent=userPts;
-  document.getElementById('d-correct').textContent=correctPreds;
-  document.getElementById('d-acc').textContent=acc+'%';
+  ['d-pts','prf-correct','prf-total','prf-acc','d-correct','d-acc'].forEach(id=>{
+    const e=document.getElementById(id);if(e){
+      if(id==='d-pts')e.textContent=userPts;
+      else if(id==='d-correct')e.textContent=correctPreds;
+      else if(id==='d-acc')e.textContent=acc+'%';
+      else if(id==='prf-correct')e.textContent=correctPreds;
+      else if(id==='prf-total')e.textContent=totalPreds;
+      else if(id==='prf-acc')e.textContent=acc+'%';
+    }
+  });
   document.getElementById('pts-disp').textContent='🏆 '+userPts;
   document.getElementById('prf-pts').textContent='🏆 '+userPts+' نقطة';
-  document.getElementById('prf-correct').textContent=correctPreds;
-  document.getElementById('prf-total').textContent=totalPreds;
-  document.getElementById('prf-acc').textContent=acc+'%';
 }
-
 function renderPredHist(){
-  if(!predHistory.length) return;
+  if(!predHistory.length)return;
   let html='';
   predHistory.slice(0,20).forEach(p=>{
-    html+=`<div class="lb-row">
-      <div style="font-size:14px">⚽</div>
+    html+=`<div class="lb-row"><div style="font-size:14px">⚽</div>
       <div style="flex:1"><div style="font-size:10px;font-weight:700">${p.home} vs ${p.away}</div>
-      <div style="font-size:9px;color:var(--muted)">${p.wdl} | ${p.s1}–${p.s2}</div></div>
-      <div style="color:var(--gold);font-family:'Oswald',sans-serif;font-size:14px">+${p.pts}</div>
-    </div>`;
+      <div style="font-size:9px;color:var(--text2)">${p.wdl} | ${p.s1}–${p.s2}</div></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--gold)">+${p.pts}</div></div>`;
   });
   document.getElementById('pred-hist').innerHTML=html;
 }
 
-// ====== NOTIFICATIONS ======
+// ===== NOTIFS =====
 function addNotif(icon,title,desc){
   const list=document.getElementById('notif-list');
-  const el=document.createElement('div');
-  el.className='notif-card';
-  el.innerHTML=`<div class="notif-icon" style="background:rgba(201,162,39,.15)">${icon}</div>
-    <div class="notif-body">
-      <div class="notif-title">${title}</div>
-      <div class="notif-desc">${desc}</div>
-      <div class="notif-time">الآن</div>
-    </div><div class="notif-dot"></div>`;
+  const el=document.createElement('div');el.className='ncard';
+  el.innerHTML=`<div class="nic" style="background:var(--golddim)">${icon}</div>
+    <div class="nbody"><div class="ntitle">${title}</div><div class="ndesc">${desc}</div><div class="ntime">الآن</div></div>
+    <div class="ndot"></div>`;
   list.prepend(el);
 }
 
-// ====== ADMIN ======
+// ===== ADMIN =====
 function goAdmin(){
   document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('admin-screen').classList.add('active');
+  document.getElementById('exit-btn').style.display='block';
 }
 function exitAdmin(){
   document.getElementById('admin-screen').classList.remove('active');
   document.getElementById('auth-screen').classList.add('active');
-  document.getElementById('admin-login-panel').style.display='block';
-  document.getElementById('admin-panels').style.display='none';
+  document.getElementById('admin-login').style.display='block';
+  document.getElementById('admin-main').style.display='none';
+  document.getElementById('admin-btns').style.display='none';
+  document.getElementById('exit-btn').style.display='none';
+  document.getElementById('apwd').value='';
 }
 function checkAdmin(){
-  const p=document.getElementById('admin-pass').value;
-  if(p!==ADMIN_PWD){toast('كلمة المرور خاطئة','err');return;}
-  document.getElementById('admin-login-panel').style.display='none';
-  document.getElementById('admin-panels').style.display='block';
-  renderAdminStats();
-  renderAdminUsers();
-  loadAdminResults();
+  if(document.getElementById('apwd').value!==ADMIN_PWD){toast('❌ كلمة مرور خاطئة','err');return;}
+  document.getElementById('admin-login').style.display='none';
+  document.getElementById('admin-main').style.display='block';
+  document.getElementById('admin-btns').style.display='flex';
+  document.getElementById('exit-btn').style.display='none';
+  renderStats();renderUsers();
 }
-function showAdminTab(tab){
-  document.getElementById('admin-users-panel').style.display=tab==='users'?'block':'none';
-  document.getElementById('admin-results-panel').style.display=tab==='results'?'block':'none';
-  document.querySelectorAll('[id^=atab-]').forEach(b=>{b.style.background='rgba(201,162,39,.15)';});
-  document.getElementById('atab-'+tab).style.background='var(--gold)';
-  document.getElementById('atab-'+tab).style.color='#000';
-}
-
-function renderAdminStats(){
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  const total=Object.keys(users).length;
-  let totalPredCount=0;
-  Object.keys(users).forEach(email=>{
-    const saved=JSON.parse(localStorage.getItem(`gp_preds_${users[email].userId}`)||'{}');
-    totalPredCount+=Object.keys(saved).length;
+function showPanel(p){
+  ['users','results','manual-preds'].forEach(id=>{
+    document.getElementById('panel-'+id).style.display=id===p?'block':'none';
   });
-  document.getElementById('a-total-users').textContent=total;
-  document.getElementById('a-total-preds').textContent=totalPredCount;
-  document.getElementById('a-active').textContent=total; // simplified
+  if(p==='results')loadResults();
+  if(p==='manual-preds')loadManualPreds();
 }
-
-function renderAdminUsers(){
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  const search=document.getElementById('user-search')?.value.toLowerCase()||'';
-  let rows='';
-  let i=1;
-  Object.values(users).filter(u=>u.name.toLowerCase().includes(search)||u.email.toLowerCase().includes(search)).forEach(u=>{
-    const acc=u.total>0?Math.round(u.correct/u.total*100):0;
-    rows+=`<tr>
-      <td>${i++}</td>
-      <td><strong>${u.name}</strong></td>
-      <td style="color:var(--muted)">${u.email}</td>
-      <td style="color:var(--gold);font-family:'Oswald',sans-serif;font-size:14px">${u.points||0}</td>
-      <td>${u.total||0}</td>
-      <td>${u.correct||0}</td>
-      <td>${acc}%</td>
-      <td><button class="btn-sm-red" onclick="deleteUser('${u.email}')">🗑 حذف</button>
-          <button class="btn-sm-gold" onclick="resetUserPts('${u.email}')" style="margin-right:4px">↺ إعادة</button></td>
-    </tr>`;
-  });
-  document.getElementById('users-tbody').innerHTML=rows||`<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px">لا يوجد مستخدمون</td></tr>`;
-  renderAdminStats();
+function renderStats(){
+  const users=getUsers();const all=Object.values(users);
+  let tp=0,tpts=0;
+  all.forEach(u=>{tp+=u.total||0;tpts+=u.points||0;});
+  document.getElementById('a-users').textContent=all.length;
+  document.getElementById('a-preds').textContent=tp;
+  document.getElementById('a-pts').textContent=tpts;
 }
-
+function renderUsers(){
+  const users=getUsers();
+  const s=(document.getElementById('usearch')?.value||'').toLowerCase();
+  let rows='',i=1;
+  Object.values(users).filter(u=>u.name.toLowerCase().includes(s)||u.email.toLowerCase().includes(s))
+    .sort((a,b)=>(b.points||0)-(a.points||0))
+    .forEach(u=>{
+      const acc=u.total>0?Math.round(u.correct/u.total*100):0;
+      rows+=`<tr><td style="color:var(--text2)">${i++}</td>
+        <td><strong>${u.name}</strong></td>
+        <td style="color:var(--text2);font-size:10px">${u.email}</td>
+        <td style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:16px">${u.points||0}</td>
+        <td style="color:var(--text2)">${u.total||0}</td>
+        <td style="color:var(--text2)">${acc}%</td>
+        <td><button class="bxs bxs-gold" onclick="resetUser('${u.email}')">↺</button>
+            <button class="bxs bxs-red" onclick="deleteUser('${u.email}')">🗑</button></td></tr>`;
+    });
+  document.getElementById('utbody').innerHTML=rows||`<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--text2)">لا يوجد مستخدمون</td></tr>`;
+  renderStats();
+}
 function deleteUser(email){
-  if(!confirm(`هل أنت متأكد من حذف المستخدم ${email}؟`)) return;
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  const u=users[email];
-  if(u){
-    localStorage.removeItem(`gp_preds_${u.userId}`);
-    localStorage.removeItem(`gp_hist_${u.userId}`);
-    localStorage.removeItem(`gp_stats_${u.userId}`);
-  }
-  delete users[email];
-  localStorage.setItem('gp_users',JSON.stringify(users));
-  renderAdminUsers();
-  toast('✅ تم حذف المستخدم');
+  if(!confirm(`حذف ${email}؟`))return;
+  const users=getUsers();const u=users[email];
+  if(u)['preds','hist','stats'].forEach(k=>localStorage.removeItem(`gp_${k}_${u.userId}`));
+  delete users[email];setUsers(users);renderUsers();toast('✅ تم الحذف','ok');
+}
+function resetUser(email){
+  if(!confirm(`تصفير نقاط ${email}؟`))return;
+  const users=getUsers();
+  if(users[email]){users[email].points=0;users[email].correct=0;users[email].total=0;
+    localStorage.setItem(`gp_stats_${users[email].userId}`,JSON.stringify({pts:0,correct:0,total:0}));}
+  setUsers(users);renderUsers();toast('✅ تم تصفير النقاط','ok');
+}
+function clearAll(){
+  if(!confirm('حذف جميع المستخدمين؟'))return;
+  const users=getUsers();
+  Object.values(users).forEach(u=>['preds','hist','stats'].forEach(k=>localStorage.removeItem(`gp_${k}_${u.userId}`)));
+  localStorage.removeItem('gp_users');renderUsers();toast('✅ تم الحذف الكامل','ok');
 }
 
-function resetUserPts(email){
-  if(!confirm(`إعادة تصفير نقاط ${email}؟`)) return;
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  if(users[email]){users[email].points=0;users[email].correct=0;users[email].total=0;}
-  localStorage.setItem('gp_users',JSON.stringify(users));
-  if(users[email]){
-    localStorage.setItem(`gp_stats_${users[email].userId}`,JSON.stringify({pts:0,correct:0,total:0}));
-  }
-  renderAdminUsers();
-  toast('✅ تم تصفير النقاط');
-}
-
-function clearAllUsers(){
-  if(!confirm('هل أنت متأكد من حذف جميع المستخدمين؟ لا يمكن التراجع!')) return;
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  Object.values(users).forEach(u=>{
-    localStorage.removeItem(`gp_preds_${u.userId}`);
-    localStorage.removeItem(`gp_hist_${u.userId}`);
-    localStorage.removeItem(`gp_stats_${u.userId}`);
-  });
-  localStorage.removeItem('gp_users');
-  renderAdminUsers();
-  toast('✅ تم حذف جميع المستخدمين');
-}
-
-// ====== ADMIN RESULTS ======
-async function loadAdminResults(){
+// ===== RESULTS =====
+async function loadResults(){
   const el=document.getElementById('results-list');
   try{
-    const r=await fetch(`${API}/api/fixtures/all`);
-    const matches=await r.json();
-    if(!Array.isArray(matches)){el.innerHTML='<div class="loading">❌ تعذر تحميل المباريات</div>';return;}
-    // عرض المباريات المنتهية فقط للإدخال اليدوي
-    const past=matches.filter(m=>m.finished||m.meccaDate<getMeccaToday());
-    let html='<table class="admin-table"><thead><tr><th>المباراة</th><th>المجموعة</th><th>التاريخ</th><th>النتيجة الفعلية</th><th></th></tr></thead><tbody>';
+    const r=await fetch(`${API}/api/fixtures/all`);const matches=await r.json();
+    const past=matches.filter(m=>m.finished).sort((a,b)=>a.localDate?.localeCompare(b.localDate||'')||0);
+    if(!past.length){el.innerHTML='<div class="empty"><div class="eico">📅</div><p>لا توجد مباريات منتهية</p></div>';return;}
+    let html='<table class="atbl"><thead><tr><th>المباراة</th><th>المجموعة</th><th>التاريخ</th><th>النتيجة الحقيقية</th><th></th></tr></thead><tbody>';
     past.forEach(m=>{
-      const saved=localStorage.getItem(`gp_result_${m.id}`);
-      const r=saved?JSON.parse(saved):null;
+      const saved=JSON.parse(localStorage.getItem(`gp_result_${m.id}`)||'null');
+      const rh=saved?.home??m.score.home??'';const ra=saved?.away??m.score.away??'';
       html+=`<tr>
-        <td><strong>${m.home.nameAr} vs ${m.away.nameAr}</strong></td>
-        <td><span class="match-group">${m.group}</span></td>
-        <td style="color:var(--muted);font-size:10px">${m.meccaDate}</td>
-        <td>
-          <div class="match-result-form">
-            <input type="number" min="0" max="20" placeholder="0" id="rh-${m.id}" value="${r?r.home:m.score.home??''}" style="width:40px;">
-            <span style="color:var(--muted)">–</span>
-            <input type="number" min="0" max="20" placeholder="0" id="ra-${m.id}" value="${r?r.away:m.score.away??''}">
-            ${r?`<span class="result-saved">✅ محفوظ</span>`:''}
-          </div>
-        </td>
-        <td><button class="btn-sm-green" onclick="saveResult('${m.id}','${m.home.nameAr}','${m.away.nameAr}')">💾 حفظ وتوزيع النقاط</button></td>
+        <td><strong style="font-size:10px">${flag(m.home.name)} ${m.home.nameAr} vs ${m.away.nameAr} ${flag(m.away.name)}</strong></td>
+        <td style="font-size:9px;color:var(--text2)">${m.group}</td>
+        <td style="font-size:9px;color:var(--text2)">${m.meccaDate}</td>
+        <td><div style="display:flex;align-items:center;gap:4px">
+          <input class="rinp" type="number" min="0" max="20" id="rh-${m.id}" value="${rh}" placeholder="0">
+          <span style="color:var(--text3);font-family:'Bebas Neue',sans-serif">–</span>
+          <input class="rinp" type="number" min="0" max="20" id="ra-${m.id}" value="${ra}" placeholder="0">
+          ${saved?'<span class="saved-tag">✅</span>':''}
+        </div></td>
+        <td><button class="bxs bxs-green" onclick="saveResult('${m.id}','${m.home.nameAr}','${m.away.nameAr}')">💾 حفظ</button></td>
       </tr>`;
     });
-    html+='</tbody></table>';
-    el.innerHTML=html;
-  }catch{
-    el.innerHTML='<div class="loading">❌ تعذر التحميل — تأكد من تشغيل السيرفر</div>';
-  }
-}
-
-function getMeccaToday(){
-  const now=new Date(Date.now()+3*3600000);
-  return now.toISOString().split('T')[0];
+    html+='</tbody></table>';el.innerHTML=html;
+  }catch{el.innerHTML='<div class="empty"><div class="eico">❌</div><p>تعذر التحميل</p></div>';}
 }
 
 function saveResult(matchId,homeName,awayName){
   const h=parseInt(document.getElementById('rh-'+matchId)?.value);
   const a=parseInt(document.getElementById('ra-'+matchId)?.value);
   if(isNaN(h)||isNaN(a)){toast('⚠️ أدخل النتيجة','err');return;}
-
-  // حفظ النتيجة
   localStorage.setItem(`gp_result_${matchId}`,JSON.stringify({home:h,away:a}));
-
-  // احتساب النقاط لكل مستخدم
   const actualWdl=h>a?'home':h<a?'away':'draw';
-  const users=JSON.parse(localStorage.getItem('gp_users')||'{}');
-  let updated=0;
+  const users=getUsers();let updated=0;
   Object.values(users).forEach(u=>{
-    const userPreds=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
-    const pred=userPreds[matchId];
-    if(!pred||pred.evaluated) return;
-    let pts=0;
-    const wdlCorrect=pred.wdl===actualWdl;
-    const exactCorrect=pred.s1===h&&pred.s2===a;
-    if(wdlCorrect) pts+=3;
-    if(exactCorrect) pts+=5;
-    pred.pts=pts; pred.evaluated=true;
-    if(wdlCorrect){u.correct=(u.correct||0)+1;}
-    u.total=(u.total||0);
+    const up=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
+    const pred=up[matchId];if(!pred||pred.evaluated)return;
+    const wok=pred.wdl===actualWdl,eok=pred.s1===h&&pred.s2===a;
+    let pts=0;if(wok)pts+=3;if(eok)pts+=5;
+    pred.pts=pts;pred.evaluated=true;
+    if(wok)u.correct=(u.correct||0)+1;
     u.points=(u.points||0)+pts;
-    localStorage.setItem(`gp_preds_${u.userId}`,JSON.stringify(userPreds));
-    localStorage.setItem(`gp_stats_${u.userId}`,JSON.stringify({pts:u.points,correct:u.correct,total:u.total}));
+    localStorage.setItem(`gp_preds_${u.userId}`,JSON.stringify(up));
+    const stats=JSON.parse(localStorage.getItem(`gp_stats_${u.userId}`)||'{"pts":0,"correct":0,"total":0}');
+    stats.pts+=pts;if(wok)stats.correct++;
+    localStorage.setItem(`gp_stats_${u.userId}`,JSON.stringify(stats));
     updated++;
   });
-  localStorage.setItem('gp_users',JSON.stringify(users));
-
-  toast(`✅ تم حفظ ${h}–${a} وتوزيع النقاط على ${updated} مستخدم`);
-  loadAdminResults();
-  renderAdminUsers();
-
-  // تحديث الـ UI لو المستخدم الحالي كان له توقع
+  setUsers(users);
+  toast(`✅ ${h}–${a} | نقاط ${updated} مستخدم`,'ok');
+  loadResults();renderStats();
   if(currentUser){
-    const myStats=JSON.parse(localStorage.getItem(`gp_stats_${currentUser.userId}`)||'null');
-    if(myStats){userPts=myStats.pts;correctPreds=myStats.correct;totalPreds=myStats.total;}
-    buildLeaderboard();updateDash();
+    const s=JSON.parse(localStorage.getItem(`gp_stats_${currentUser.userId}`)||'null');
+    if(s){userPts=s.pts;correctPreds=s.correct;totalPreds=s.total;}
+    buildLB();updateDash();
   }
 }
 
-// ====== MODAL & TOAST ======
+// ===== MANUAL PREDICTIONS =====
+function loadManualPreds(){
+  const users=getUsers();
+  const sel=document.getElementById('mpred-user-select');
+  sel.innerHTML='<option value="">اختر مستخدماً...</option>';
+  Object.values(users).forEach(u=>{
+    sel.innerHTML+=`<option value="${u.email}">${u.name} (${u.email})</option>`;
+  });
+  document.getElementById('mpred-matches').innerHTML='<div class="empty"><div class="eico">👆</div><p>اختر مستخدماً أولاً</p></div>';
+}
+
+async function loadManualPredMatches(){
+  const email=document.getElementById('mpred-user-select').value;
+  if(!email)return;
+  const el=document.getElementById('mpred-matches');
+  el.innerHTML='<div class="loading"><div class="spinner"></div><br>جاري التحميل...</div>';
+  try{
+    const r=await fetch(`${API}/api/fixtures/all`);const matches=await r.json();
+    const users=getUsers();const u=users[email];
+    if(!u){el.innerHTML='<div class="empty"><div class="eico">❌</div><p>المستخدم غير موجود</p></div>';return;}
+    const userPreds=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
+    // إظهار المباريات المنتهية فقط بدون توقع مسبق لهذا المستخدم
+    const past=matches.filter(m=>m.finished).sort((a,b)=>a.localDate?.localeCompare(b.localDate||'')||0);
+    if(!past.length){el.innerHTML='<div class="empty"><div class="eico">📅</div><p>لا توجد مباريات منتهية</p></div>';return;}
+    let html=`<p style="font-size:10px;color:var(--gold);margin-bottom:10px;font-weight:700">✍️ إدخال توقعات: <strong>${u.name}</strong></p>`;
+    past.forEach(m=>{
+      const existing=userPreds[m.id];
+      const rh=m.score.home??'';const ra=m.score.away??'';
+      const savedResult=JSON.parse(localStorage.getItem(`gp_result_${m.id}`)||'null');
+      html+=`<div class="mpred-card">
+        <div class="mpred-match">
+          <span>${flag(m.home.name)}</span>
+          <strong style="font-size:11px">${m.home.nameAr} vs ${m.away.nameAr}</strong>
+          <span>${flag(m.away.name)}</span>
+          <span style="font-size:9px;color:var(--text2);margin-right:auto">${m.meccaDate}</span>
+          ${(rh!=='')?`<span style="font-size:9px;color:var(--green);font-weight:700">نتيجة: ${rh}–${ra}</span>`:''}
+          ${existing?`<span style="font-size:9px;color:var(--gold);font-weight:700">✅ مسجّل</span>`:''}
+        </div>
+        <div class="mpred-btns">
+          <button class="pbtn${existing?.wdl==='home'?' sh':''}" id="mp-h-${m.id}" onclick="setMpredWDL('${m.id}','home',this)">🏠 ${m.home.nameAr}</button>
+          <button class="pbtn${existing?.wdl==='draw'?' sd':''}" id="mp-d-${m.id}" onclick="setMpredWDL('${m.id}','draw',this)">🤝 تعادل</button>
+          <button class="pbtn${existing?.wdl==='away'?' sa':''}" id="mp-a-${m.id}" onclick="setMpredWDL('${m.id}','away',this)">✈️ ${m.away.nameAr}</button>
+        </div>
+        <div class="mpred-score">
+          <span style="font-size:10px;color:var(--text2)">النتيجة:</span>
+          <input type="number" min="0" max="20" placeholder="0" id="mp-s1-${m.id}" value="${existing?.s1??''}">
+          <span style="color:var(--text3);font-family:'Bebas Neue',sans-serif">–</span>
+          <input type="number" min="0" max="20" placeholder="0" id="mp-s2-${m.id}" value="${existing?.s2??''}">
+        </div>
+      </div>`;
+    });
+    el.innerHTML=html;
+    // حفظ قائمة المباريات للاستخدام لاحقاً
+    el.dataset.matches=JSON.stringify(past.map(m=>m.id));
+  }catch{el.innerHTML='<div class="empty"><div class="eico">❌</div><p>تعذر التحميل</p></div>';}
+}
+
+const mpredWDL={};
+function setMpredWDL(matchId,choice,btn){
+  const btns=['h','d','a'];
+  btns.forEach(b=>{const el=document.getElementById(`mp-${b}-${matchId}`);if(el)el.classList.remove('sh','sd','sa');});
+  btn.classList.add(choice==='home'?'sh':choice==='draw'?'sd':'sa');
+  mpredWDL[matchId]=choice;
+}
+
+function saveAllManualPreds(){
+  const email=document.getElementById('mpred-user-select').value;
+  if(!email){toast('⚠️ اختر مستخدماً أولاً','err');return;}
+  const users=getUsers();const u=users[email];
+  if(!u){toast('المستخدم غير موجود','err');return;}
+  const userPreds=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
+  const matchIds=JSON.parse(document.getElementById('mpred-matches').dataset.matches||'[]');
+  let saved=0;
+  matchIds.forEach(matchId=>{
+    const wdlChoice=mpredWDL[matchId]||
+      (document.getElementById(`mp-h-${matchId}`)?.classList.contains('sh')?'home':
+       document.getElementById(`mp-d-${matchId}`)?.classList.contains('sd')?'draw':
+       document.getElementById(`mp-a-${matchId}`)?.classList.contains('sa')?'away':null);
+    const s1v=document.getElementById(`mp-s1-${matchId}`)?.value;
+    const s2v=document.getElementById(`mp-s2-${matchId}`)?.value;
+    if(!wdlChoice)return;
+    const s1=parseInt(s1v)||0,s2=parseInt(s2v)||0;
+    const wdlLabel=wdlChoice==='home'?`🏠 ${allMatches.find(m=>m.id===matchId)?.home?.nameAr||''}`:
+      wdlChoice==='draw'?'🤝 تعادل':`✈️ ${allMatches.find(m=>m.id===matchId)?.away?.nameAr||''}`;
+    // احتساب النقاط من النتيجة الحقيقية
+    const savedResult=JSON.parse(localStorage.getItem(`gp_result_${matchId}`)||'null');
+    const matchData=allMatches.find(m=>m.id===matchId);
+    const rH=savedResult?.home??matchData?.score?.home;
+    const rA=savedResult?.away??matchData?.score?.away;
+    let pts=0;
+    if(rH!==null&&rH!==undefined){
+      const actualWdl=rH>rA?'home':rH<rA?'away':'draw';
+      const wok=wdlChoice===actualWdl;const eok=s1===rH&&s2===rA;
+      if(wok)pts+=3;if(eok)pts+=5;
+    }
+    if(!userPreds[matchId]||!userPreds[matchId].confirmed){
+      userPreds[matchId]={wdl:wdlChoice,wdlLabel,s1,s2,confirmed:true,pts,evaluated:rH!==undefined&&rH!==null};
+      u.total=(u.total||0)+1;
+      if(pts>0){u.correct=(u.correct||0)+1;u.points=(u.points||0)+pts;}
+      saved++;
+    }
+  });
+  localStorage.setItem(`gp_preds_${u.userId}`,JSON.stringify(userPreds));
+  localStorage.setItem(`gp_stats_${u.userId}`,JSON.stringify({pts:u.points||0,correct:u.correct||0,total:u.total||0}));
+  setUsers(users);renderStats();renderUsers();
+  toast(`✅ تم حفظ ${saved} توقع للمستخدم ${u.name}`,'ok');
+  if(currentUser&&currentUser.email===email){
+    userPts=u.points||0;correctPreds=u.correct||0;totalPreds=u.total||0;
+    buildLB();updateDash();
+  }
+  loadManualPredMatches();
+}
+
+// ===== MODAL & TOAST =====
 function showModal(emoji,title,pts,desc){
   document.getElementById('m-emoji').textContent=emoji;
   document.getElementById('m-title').textContent=title;
