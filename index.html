@@ -1225,9 +1225,15 @@ async function loadManualPredMatches(){
   el.innerHTML='<div class="loading"><div class="spinner"></div><br>جاري التحميل...</div>';
   try{
     const r=await fetch(`${API}/api/fixtures/all`);const matches=await r.json();
-    const users=getUsers();const u=users[email];
-    if(!u){el.innerHTML='<div class="empty"><div class="eico">❌</div><p>المستخدم غير موجود</p></div>';return;}
-    const userPreds=JSON.parse(localStorage.getItem(`gp_preds_${u.userId}`)||'{}');
+    // جلب المستخدم من السيرفر
+    const ur=await fetch(`${API}/api/users`);
+    const allUsers=await ur.json();
+    const u=allUsers.find(x=>x.email===email);
+    if(!u){el.innerHTML='<div class="empty"><div class="eico">❌</div><p>المستخدم غير موجود في Supabase</p></div>';return;}
+    // جلب توقعاته الحالية
+    const pr=await fetch(`${API}/api/predictions/${u.userId}`);
+    const userPreds=pr.ok?await pr.json():{};
+
     // إظهار المباريات المنتهية فقط بدون توقع مسبق لهذا المستخدم
     const past=matches.filter(m=>m.finished).sort((a,b)=>a.localDate?.localeCompare(b.localDate||'')||0);
     if(!past.length){el.innerHTML='<div class="empty"><div class="eico">📅</div><p>لا توجد مباريات منتهية</p></div>';return;}
