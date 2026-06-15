@@ -1233,6 +1233,8 @@ async function loadManualPredMatches(){
     // إظهار المباريات المنتهية فقط بدون توقع مسبق لهذا المستخدم
     const past=matches.filter(m=>m.finished).sort((a,b)=>a.localDate?.localeCompare(b.localDate||'')||0);
     if(!past.length){el.innerHTML='<div class="empty"><div class="eico">📅</div><p>لا توجد مباريات منتهية</p></div>';return;}
+    // حفظ قائمة المباريات عالمياً
+    window._currentManualMatches=past;
     let html=`<p style="font-size:10px;color:var(--gold);margin-bottom:10px;font-weight:700">✍️ إدخال توقعات: <strong>${u.name}</strong></p>`;
     past.forEach(m=>{
       const existing=userPreds[m.id];
@@ -1280,7 +1282,7 @@ async function saveAllManualPreds(){
   const uObj=window._adminUsers?.[parseInt(idx)];
   if(!uObj){toast('⚠️ خطأ في تحميل المستخدم','err');return;}
   const email=uObj.email;
-  const matchIds=JSON.parse(document.getElementById('mpred-matches').dataset.matches||'[]');
+  const matchIds=(window._currentManualMatches||[]).map(m=>m.id);
   let saved=0,errors=0;
   for(const matchId of matchIds){
     const wdlChoice=mpredWDL[matchId]||
