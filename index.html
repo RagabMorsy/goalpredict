@@ -620,12 +620,9 @@ async function doLogin(){
     const r=await fetch(`${API}/api/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const d=await r.json();
     if(!r.ok){toast(d.error||'خطأ','err');return;}
-    saveUserLocal({...d,password:pass}); enterApp(d);
-  }catch{
-    const users=getUsers();const u=users[email];
-    if(!u){toast('البريد غير مسجّل','err');return;}
-    if(u.password!==pass){toast('كلمة المرور خاطئة','err');return;}
-    enterApp(u);
+    enterApp(d);
+  }catch(e){
+    toast('❌ تعذر الاتصال بالسيرفر. تأكد من اتصالك بالإنترنت','err');
   }
 }
 async function doRegister(){
@@ -637,14 +634,9 @@ async function doRegister(){
     const r=await fetch(`${API}/api/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass})});
     const d=await r.json();
     if(!r.ok){toast(d.error||'خطأ','err');return;}
-    saveUserLocal({...d,password:pass}); enterApp(d); toast(`🎉 أهلاً ${name}!`);
-  }catch{
-    const users=getUsers();
-    if(users[email]){toast('البريد مسجّل مسبقاً','err');return;}
-    const userId='u_'+Date.now();
-    const color=COLORS[Object.keys(users).length%COLORS.length];
-    const u={userId,name,email,password:pass,points:0,correct:0,total:0,color};
-    users[email]=u; setUsers(users); enterApp(u); toast(`🎉 أهلاً ${name}!`);
+    enterApp(d); toast(`🎉 أهلاً ${name}!`);
+  }catch(e){
+    toast('❌ تعذر الاتصال بالسيرفر. تأكد من اتصالك بالإنترنت','err');
   }
 }
 function enterApp(u){
