@@ -1007,20 +1007,28 @@ function renderLB(){
 }
 
 // ===== DASHBOARD =====
-function updateDash(){
+async function updateDash(){
+  // جلب بيانات المستخدم الحالي من السيرفر
+  if(currentUser?.userId){
+    try{
+      const r=await fetch(`${API}/api/users/${currentUser.userId}`);
+      if(r.ok){
+        const u=await r.json();
+        userPts=u.points||0;
+        correctPreds=u.correct||0;
+        totalPreds=u.total||0;
+      }
+    }catch{}
+  }
   const acc=totalPreds>0?Math.round(correctPreds/totalPreds*100):0;
-  ['d-pts','prf-correct','prf-total','prf-acc','d-correct','d-acc'].forEach(id=>{
-    const e=document.getElementById(id);if(e){
-      if(id==='d-pts')e.textContent=userPts;
-      else if(id==='d-correct')e.textContent=correctPreds;
-      else if(id==='d-acc')e.textContent=acc+'%';
-      else if(id==='prf-correct')e.textContent=correctPreds;
-      else if(id==='prf-total')e.textContent=totalPreds;
-      else if(id==='prf-acc')e.textContent=acc+'%';
-    }
-  });
+  document.getElementById('d-pts').textContent=userPts;
+  document.getElementById('d-correct').textContent=correctPreds;
+  document.getElementById('d-acc').textContent=acc+'%';
   document.getElementById('pts-disp').textContent='🏆 '+userPts;
   document.getElementById('prf-pts').textContent='🏆 '+userPts+' نقطة';
+  document.getElementById('prf-correct').textContent=correctPreds;
+  document.getElementById('prf-total').textContent=totalPreds;
+  document.getElementById('prf-acc').textContent=acc+'%';
 }
 function renderPredHist(){
   if(!predHistory.length)return;
@@ -1065,7 +1073,7 @@ function checkAdmin(){
   document.getElementById('admin-main').style.display='block';
   document.getElementById('admin-btns').style.display='flex';
   document.getElementById('exit-btn').style.display='none';
-  renderStats();renderUsers();
+  renderStats();renderUsers();showPanel('users');
 }
 function showPanel(p){
   ['users','results','manual-preds'].forEach(id=>{
@@ -1074,13 +1082,16 @@ function showPanel(p){
   if(p==='results')loadResults();
   if(p==='manual-preds')loadManualPreds();
 }
-function renderStats(){
-  const users=getUsers();const all=Object.values(users);
-  let tp=0,tpts=0;
-  all.forEach(u=>{tp+=u.total||0;tpts+=u.points||0;});
-  document.getElementById('a-users').textContent=all.length;
-  document.getElementById('a-preds').textContent=tp;
-  document.getElementById('a-pts').textContent=tpts;
+async function renderStats(){
+  try{
+    const r=await fetch(`${API}/api/users`);
+    const users=await r.json();
+    const tp=users.reduce((s,u)=>s+(u.total||0),0);
+    const tpts=users.reduce((s,u)=>s+(u.points||0),0);
+    document.getElementById('a-users').textContent=users.length;
+    document.getElementById('a-preds').textContent=tp;
+    document.getElementById('a-pts').textContent=tpts;
+  }catch{}
 }
 async function renderUsers(){
   const s=(document.getElementById('usearch')?.value||'').toLowerCase();
@@ -1102,11 +1113,7 @@ async function renderUsers(){
     });
     document.getElementById('utbody').innerHTML=rows||`<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--text2)">لا يوجد مستخدمون</td></tr>`;
     // تحديث الإحصائيات
-    document.getElementById('a-users').textContent=users.length;
-    const tp=users.reduce((s,u)=>s+(u.total||0),0);
-    const tpts=users.reduce((s,u)=>s+(u.points||0),0);
-    document.getElementById('a-preds').textContent=tp;
-    document.getElementById('a-pts').textContent=tpts;
+
   }catch(e){
     document.getElementById('utbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--red)">❌ تعذر تحميل المستخدمين</td></tr>`;
   }
@@ -1228,7 +1235,7 @@ async function loadManualPredMatches(){
     past.forEach(m=>{
       const existing=userPreds[m.id];
       const rh=m.score.home??'';const ra=m.score.away??'';
-      const savedResult=JSON.parse(localStorage.getItem(`gp_result_${m.id}`)||'null');
+      const savedResult=null;
       html+=`<div class="mpred-card">
         <div class="mpred-match">
           <span>${flag(m.home.name)}</span>
